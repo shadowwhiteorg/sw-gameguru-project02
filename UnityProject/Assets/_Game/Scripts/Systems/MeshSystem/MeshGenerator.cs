@@ -3,24 +3,9 @@ using _Game.Systems.Core;
 
 namespace _Game.Systems.MeshSystem
 {
-    public class MeshGenerator : MonoBehaviour
+    public static class MeshGenerator
     {
-        public Platform GeneratePlatform(Vector3 dimensions, Material material, Vector3 position)
-        {
-            GameObject newPlatformObj = new GameObject("Platform");
-            newPlatformObj.transform.position = position;
-            Platform platform = newPlatformObj.AddComponent<Platform>();
-            platform.Initialize(dimensions, material);
-            MeshFilter meshFilter = newPlatformObj.AddComponent<MeshFilter>();
-            MeshRenderer meshRenderer = newPlatformObj.AddComponent<MeshRenderer>();
-            meshRenderer.material = material;
-        
-            Mesh mesh = CreateMesh(dimensions);
-            meshFilter.mesh = mesh;
-            return platform;
-        }
-
-        private Mesh CreateMesh(Vector3 dimensions)
+        public static Mesh CreateMesh(Vector3 dimensions)
         {
             Mesh mesh = new Mesh();
             mesh.vertices = new Vector3[]
