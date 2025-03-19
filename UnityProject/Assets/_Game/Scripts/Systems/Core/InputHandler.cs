@@ -10,9 +10,14 @@ namespace _Game.Systems.Core
         [SerializeField] private PlatformMeshHandlerTest meshHandlerTest;
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.G))
             {
-                // meshHandlerTest.TestGenerationAndSliceButton();
+                meshHandlerTest.GenerateTestPlatform();
+            }
+
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                meshHandlerTest.SliceTestPlatform();
             }
         }
     }
