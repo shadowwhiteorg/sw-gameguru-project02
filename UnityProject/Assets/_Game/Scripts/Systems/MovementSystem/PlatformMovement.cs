@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using _Game.DataStructures;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
@@ -49,6 +51,17 @@ namespace _Game.Systems.MovementSystem
         public void RegisterPlatform(Platform newPlatform)
         {
             activePlatforms.Add(newPlatform);
+        }
+
+        private void OnEnable()
+        {
+            EventBus.Subscribe<OnLevelStartEvent>(e=> StartMovement());
+        }
+
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<OnLevelStartEvent>(e=> StartMovement());
+
         }
     }
 }

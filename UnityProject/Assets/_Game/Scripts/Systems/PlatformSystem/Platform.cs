@@ -44,13 +44,12 @@ namespace _Game.Systems.PlatformSystem
 
         private IEnumerator MoveToX()
         {
-            float duration = 1f; // Adjust as needed
+            float duration = 1f;
             Vector3 startPos = _mainPart.transform.localPosition;
-            Vector3 endPos = new Vector3(startPos.x + PlatformMeshHandler.Instance.RelativeSpawnPositionX*2, startPos.y, startPos.z);
+            Vector3 endPos = new Vector3(startPos.x + MeshHandler.Instance.RelativeSpawnPositionX*2, startPos.y, startPos.z);
 
             while (true) // Infinite loop for ping-pong effect
             {
-                // Move from startPos to endPos
                 float elapsedTime = 0f;
                 while (elapsedTime < duration)
                 {
@@ -60,7 +59,6 @@ namespace _Game.Systems.PlatformSystem
                 }
                 _mainPart.transform.localPosition = endPos;
 
-                // Move from endPos back to startPos
                 elapsedTime = 0f;
                 while (elapsedTime < duration)
                 {
@@ -81,28 +79,12 @@ namespace _Game.Systems.PlatformSystem
         {
             _mainPart = mainPart;
         }
-        
-        public void StartMoving()
-        {
-            _isMoving = true;
-            _startPosition = transform.position - Vector3.right * movementRange;
-        }
-
         public void StopMoving()
         {
             _isMoving = false;
             StopCoroutine(_moveCoroutine);
         }
-        
-        private void Update()
-        {
-            if (_isMoving)
-            {
-                float x = _startPosition.x + Mathf.PingPong(Time.time * _speed, PlatformMeshHandler.Instance.RelativeSpawnPositionX*2);
-                transform.position = new Vector3(x, transform.position.y, transform.position.z);
-            }
-        }
-        
+
         public void StartFalling()
         {
             transform.SetParent(null);
