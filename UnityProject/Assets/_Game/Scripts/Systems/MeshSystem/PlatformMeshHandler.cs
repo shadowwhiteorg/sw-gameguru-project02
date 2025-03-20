@@ -10,6 +10,8 @@ namespace _Game.Systems.MeshSystem
     {
         [SerializeField] private Material platformMaterial;
         [SerializeField] private Vector3 initialPlatformSize = new Vector3(4, 1, 4);
+        [SerializeField] private float failRange = 0.25f;
+        [SerializeField] private float comboTolerance = 0.2f;
 
         public Platform GeneratePlatform(Vector3 position, float platformWidth = 0 )
         {
@@ -86,12 +88,15 @@ namespace _Game.Systems.MeshSystem
               
             originalPlatform.MainPart.SetActive(false);
             bool isOutsideBounds = leftBound > originalRight || rightBound < originalLeft;
-            if (mainMeshSize.x <= 0.5f || isOutsideBounds)
+            if (mainMeshSize.x <= failRange || isOutsideBounds)
             {
                 Debug.Log("Fail");
-                EventBus.Fire(new Events.OnLevelFailEvent());
+                EventBus.Fire(new OnLevelFailEvent());
                 return;
             }
+            
+            if(slicedMeshSize.x<=comboTolerance)
+                EventBus.Fire(new OnComboEvent());
 
             GameObject mainMesh = GeneratePlatformMesh(originalPlatform, mainMeshSize, mainMeshPosition, true);
             GameObject slicedMesh = GeneratePlatformMesh(originalPlatform, slicedMeshSize, slicedMeshPosition, false);

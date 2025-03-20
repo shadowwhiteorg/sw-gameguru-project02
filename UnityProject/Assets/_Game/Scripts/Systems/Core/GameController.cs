@@ -22,8 +22,7 @@ namespace _Game.Systems.Core
             if (Input.GetKeyDown(KeyCode.P))
             {
                 _movingPlatform.StopMoving();
-                meshHandler.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x, _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x, out var successful);
-                if(!successful) return;
+                if(SliceCurrentPlatform()) return;
                 _currentPlatform = _movingPlatform;
                 CreateNewMovingPlatform();
             }
@@ -41,10 +40,10 @@ namespace _Game.Systems.Core
             _movingPlatform.StartMoving();
         }
         
-        private void SliceCurrentPlatform()
+        private bool SliceCurrentPlatform()
         {
-            // _currentPlatform.StartMoving();
-            // meshHandler.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x, _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x);
+            meshHandler.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x, _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x, out var successful);
+            return successful;
         }
     }
 }
