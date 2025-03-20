@@ -22,7 +22,7 @@ namespace _Game.Systems.Core
             if (Input.GetKeyDown(KeyCode.P))
             {
                 _movingPlatform.StopMoving();
-                if(SliceCurrentPlatform()) return;
+                if(!SliceCurrentPlatform()) return;
                 _currentPlatform = _movingPlatform;
                 CreateNewMovingPlatform();
             }
