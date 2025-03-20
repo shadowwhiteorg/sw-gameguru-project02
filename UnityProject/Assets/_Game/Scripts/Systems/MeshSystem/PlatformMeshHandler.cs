@@ -1,69 +1,102 @@
 ﻿using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Game.Systems.MeshSystem
 {
     public class PlatformMeshHandler : Singleton<PlatformMeshHandler>
     {
-        public Platform GeneratePlatform(Vector3 dimensions, Material material, Vector3 position)
+        [SerializeField] private Material platformMaterial;
+        [SerializeField] private Vector3 initialPlatformSize = new Vector3(4, 1, 4);
+
+        public Platform GeneratePlatform(Vector3 position, float platformWidth = 0 )
         {
             GameObject mNewPlatformObj = new GameObject("Platform");
             mNewPlatformObj.transform.position = position;
             Platform mPlatform = mNewPlatformObj.AddComponent<Platform>();
-            
-           GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform, dimensions, material,position,true);
-            
-            mPlatform.Initialize(dimensions, material,mMainMeshObject);
-            
+            Vector3 mPlatformSize = new Vector3(platformWidth>0 ? platformWidth: initialPlatformSize.x,initialPlatformSize.y,initialPlatformSize.z);
+
+            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize, position, true);
+
+            mPlatform.Initialize(mMainMeshObject);
+
             return mPlatform;
         }
 
-        private GameObject GeneratePlatformMesh(Platform platform, Vector3 dimensions,Material material, Vector3 position, bool isMain)
+        private GameObject GeneratePlatformMesh(Platform platform, Vector3 dimensions, Vector3 position, bool isMain)
         {
-            GameObject mMainMeshObject = new GameObject( isMain ? "MainMesh":"SlicedMesh");
-            mMainMeshObject.transform.position = position;
-            mMainMeshObject.transform.SetParent(platform.transform);
-            
-            MeshFilter mMeshFilter = mMainMeshObject.AddComponent<MeshFilter>();
-            MeshRenderer mMeshRenderer = mMainMeshObject.AddComponent<MeshRenderer>();
-            mMeshRenderer.material = material;
-        
+            GameObject mMeshObject = new GameObject(isMain ? "MainMesh" : "SlicedMesh");
+            mMeshObject.transform.position = position;
+            mMeshObject.transform.SetParent(platform.transform);
+
+            MeshFilter mMeshFilter = mMeshObject.AddComponent<MeshFilter>();
+            MeshRenderer mMeshRenderer = mMeshObject.AddComponent<MeshRenderer>();
+            mMeshRenderer.material = platformMaterial;
+
             Mesh mMesh = MeshGenerator.CreateMesh(dimensions);
             mMeshFilter.mesh = mMesh;
+
+            if (isMain)
+                platform.SetMainPart(mMeshObject);
+            else
+                platform.SetSlicedPart(mMeshObject);
+
             return mMeshFilter.gameObject;
         }
 
-        public void SlicePlatform(Platform platform, float sliceZ, bool leftSlide)
+        public void SlicePlatform(Platform originalPlatform, float leftBound, float rightBound)
         {
-            float sliceLeft = Mathf.Max(sliceZ, platform.transform.position.x);
-            float sliceRight = Mathf.Min(sliceZ, platform.transform.position.x + platform.Dimensions.x);
+            if (leftBound >= rightBound) return;
+
+            float originalLeft = originalPlatform.MainPartPivot.x;
+            float originalRight = originalLeft + originalPlatform.MainPartSize.x;
+
+            bool isSlicingFromRight = rightBound < originalRight;
+
+            Vector3 mainMeshPosition, slicedMeshPosition;
+            Vector3 mainMeshSize, slicedMeshSize;
+
+            if (isSlicingFromRight)
+            {
+                mainMeshPosition = originalPlatform.MainPartPivot;
+                mainMeshSize = new Vector3(rightBound - originalLeft, originalPlatform.MainPartSize.y,
+                    originalPlatform.MainPartSize.z);
+
+                slicedMeshPosition = new Vector3(rightBound, originalPlatform.MainPartPivot.y,
+                    originalPlatform.MainPartPivot.z);
+                slicedMeshSize = new Vector3(originalRight - rightBound, originalPlatform.MainPartSize.y,
+                    originalPlatform.MainPartSize.z);
+            }
+            else
+            {
+                mainMeshPosition = new Vector3(leftBound, originalPlatform.MainPartPivot.y,
+                    originalPlatform.MainPartPivot.z);
+                mainMeshSize = new Vector3(originalRight - leftBound, originalPlatform.MainPartSize.y,
+                    originalPlatform.MainPartSize.z);
+
+                slicedMeshPosition = originalPlatform.MainPartPivot;
+                slicedMeshSize = new Vector3(leftBound - originalLeft, originalPlatform.MainPartSize.y,
+                    originalPlatform.MainPartSize.z);
+            }
+
             
-            float newWidthLeft = sliceLeft - platform.transform.position.x;
-            float newWidthRight = (platform.transform.position.x + platform.Dimensions.x) - sliceRight;
-
-            Vector3 newPositionLeft = new Vector3(platform.transform.position.x, platform.transform.position.y, platform.transform.position.z);
-            Vector3 newPositionRight = new Vector3(sliceRight, platform.transform.position.y, platform.transform.position.z);
+              
+            originalPlatform.MainPart.SetActive(false);
             
-            platform.MainPart?.SetActive(false);
-            GeneratePlatformMesh(platform,new Vector3(newWidthLeft, platform.Dimensions.y, platform.Dimensions.z), platform.PlatformMaterial, newPositionLeft,false);
-            GeneratePlatformMesh(platform,new Vector3(newWidthRight, platform.Dimensions.y, platform.Dimensions.z), platform.PlatformMaterial, newPositionRight,true);
-            
+            if (slicedMeshSize.x <= 0.5f)
+            {
+                Debug.Log("Fail");
+                return;
+            }
 
-        }
-        
-        public Platform SlicePlatform(Platform originalPlatform, float leftBound, float rightBound)
-        {
-            float sliceLeft = Mathf.Max(leftBound, originalPlatform.transform.position.x);
-            float sliceRight = Mathf.Min(rightBound, originalPlatform.transform.position.x + originalPlatform.Dimensions.x);
+            GameObject mainMesh = GeneratePlatformMesh(originalPlatform, mainMeshSize, mainMeshPosition, true);
+            GameObject slicedMesh = GeneratePlatformMesh(originalPlatform, slicedMeshSize, slicedMeshPosition, false);
 
-            if (sliceLeft >= sliceRight)
-                return null;
+           
 
-            float newWidth = sliceRight - sliceLeft;
-            Vector3 newPosition = new Vector3(sliceLeft, originalPlatform.transform.position.y, originalPlatform.transform.position.z);
-
-            return GeneratePlatform(new Vector3(newWidth, originalPlatform.Dimensions.y, originalPlatform.Dimensions.z), originalPlatform.PlatformMaterial, newPosition);
+            originalPlatform.SetMainPart(mainMesh);
+            originalPlatform.SetSlicedPart(slicedMesh);
         }
     }
 }

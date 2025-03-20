@@ -21,12 +21,12 @@ namespace _Game.Systems.Test
 
         public void GenerateTestPlatform()
         {
-            _generatedPlatform = meshHandler.GeneratePlatform(platformDimensions, testMaterial, platformPosition);
+            // _generatedPlatform = meshHandler.GeneratePlatform(platformDimensions, testMaterial, platformPosition);
         }
 
         public void SliceTestPlatform()
         {
-            meshHandler.SlicePlatform(_generatedPlatform, sliceZ,true);
+            // meshHandler.SlicePlatform(_generatedPlatform, sliceZ,true);
         }
     }
 }
