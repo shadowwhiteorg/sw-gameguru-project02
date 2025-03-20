@@ -18,16 +18,12 @@ namespace _Game.Systems.Core
         
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                // _currentPlatform = meshHandler.GeneratePlatform( _currentPlatform ? _currentPlatform.MainPartPivot : Vector3.zero);
-                CreateNewMovingPlatform();
-            }
+            
             if (Input.GetKeyDown(KeyCode.P))
             {
                 _movingPlatform.StopMoving();
-                SliceCurrentPlatform();
-                // _currentPlatform.gameObject.SetActive(false);
+                meshHandler.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x, _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x, out var successful);
+                if(!successful) return;
                 _currentPlatform = _movingPlatform;
                 CreateNewMovingPlatform();
             }
@@ -48,7 +44,7 @@ namespace _Game.Systems.Core
         private void SliceCurrentPlatform()
         {
             // _currentPlatform.StartMoving();
-            meshHandler.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x, _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x);
+            // meshHandler.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x, _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x);
         }
     }
 }

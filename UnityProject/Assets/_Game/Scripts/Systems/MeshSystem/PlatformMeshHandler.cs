@@ -1,4 +1,5 @@
-﻿using _Game.Systems.PlatformSystem;
+﻿using _Game.DataStructures;
+using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -45,8 +46,9 @@ namespace _Game.Systems.MeshSystem
             return mMeshFilter.gameObject;
         }
 
-        public void SlicePlatform(Platform originalPlatform, float leftBound, float rightBound)
+        public void SlicePlatform(Platform originalPlatform, float leftBound, float rightBound, out bool isSuccessful)
         {
+            isSuccessful = false;
             if (leftBound >= rightBound) return;
 
             float originalLeft = originalPlatform.MainPartPivot.x;
@@ -83,10 +85,11 @@ namespace _Game.Systems.MeshSystem
             
               
             originalPlatform.MainPart.SetActive(false);
-            
-            if (slicedMeshSize.x <= 0.5f)
+            bool isOutsideBounds = leftBound > originalRight || rightBound < originalLeft;
+            if (mainMeshSize.x <= 0.5f || isOutsideBounds)
             {
                 Debug.Log("Fail");
+                EventBus.Fire(new Events.OnLevelFailEvent());
                 return;
             }
 
@@ -94,7 +97,7 @@ namespace _Game.Systems.MeshSystem
             GameObject slicedMesh = GeneratePlatformMesh(originalPlatform, slicedMeshSize, slicedMeshPosition, false);
 
            
-
+            isSuccessful = true;
             originalPlatform.SetMainPart(mainMesh);
             originalPlatform.SetSlicedPart(slicedMesh);
         }
