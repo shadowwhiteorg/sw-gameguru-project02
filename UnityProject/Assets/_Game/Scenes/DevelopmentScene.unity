@@ -600,7 +600,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   platformMaterial: {fileID: 2100000, guid: 5b25cd95e3901d24f89b00fa0a88cf4c, type: 2}
-  platformSize: {x: 4, y: 1, z: 4}
+  initialPlatformSize: {x: 4, y: 1, z: 4}
+  failRange: 0.25
+  comboTolerance: 0.2
+  relativeSpawnPositionX: 2
 --- !u!4 &1330460862
 Transform:
   m_ObjectHideFlags: 0

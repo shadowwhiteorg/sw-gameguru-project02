@@ -23,6 +23,7 @@ namespace _Game.Systems.Core
             {
                 _movingPlatform.StopMoving();
                 if(!SliceCurrentPlatform()) return;
+                _movingPlatform.StartFalling();
                 _currentPlatform = _movingPlatform;
                 CreateNewMovingPlatform();
             }
@@ -37,7 +38,8 @@ namespace _Game.Systems.Core
         {
             Vector3 newPosition = _currentPlatform.MainPartPivot + new Vector3(0, 0,_currentPlatform.MainPartSize.z);
             _movingPlatform = meshHandler.GeneratePlatform( newPosition, _currentPlatform.MainPartSize.x);
-            _movingPlatform.StartMoving();
+            _movingPlatform.MoveMainPart();
+            // _movingPlatform.StartMoving();
         }
         
         private bool SliceCurrentPlatform()
