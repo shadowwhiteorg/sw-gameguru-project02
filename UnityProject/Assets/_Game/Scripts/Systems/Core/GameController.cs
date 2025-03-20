@@ -1,4 +1,5 @@
 ﻿using _Game.Systems.MeshSystem;
+using _Game.Systems.MovementSystem;
 using _Game.Systems.PlatformSystem;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -27,6 +28,9 @@ namespace _Game.Systems.Core
                 _currentPlatform = _movingPlatform;
                 CreateNewMovingPlatform();
             }
+
+            if (Input.GetKeyDown(KeyCode.O))
+                PlatformMovement.Instance.StartMovement();
         }
 
         private void CreateNewPlatform()

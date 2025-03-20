@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using _Game.Systems.MeshSystem;
+using _Game.Systems.MovementSystem;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -33,6 +34,7 @@ namespace _Game.Systems.PlatformSystem
         {
             _mainPart = mainPart;
             _isMoving = false;
+            PlatformMovement.Instance.RegisterPlatform(this);
         }
         
         public void MoveMainPart()
@@ -43,7 +45,7 @@ namespace _Game.Systems.PlatformSystem
         private IEnumerator MoveToX()
         {
             float duration = 1f; // Adjust as needed
-            Vector3 startPos = _mainPart.transform.position;
+            Vector3 startPos = _mainPart.transform.localPosition;
             Vector3 endPos = new Vector3(startPos.x + PlatformMeshHandler.Instance.RelativeSpawnPositionX*2, startPos.y, startPos.z);
 
             while (true) // Infinite loop for ping-pong effect
@@ -53,20 +55,20 @@ namespace _Game.Systems.PlatformSystem
                 while (elapsedTime < duration)
                 {
                     elapsedTime += Time.deltaTime;
-                    _mainPart.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / duration);
+                    _mainPart.transform.localPosition = Vector3.Lerp(startPos, endPos, elapsedTime / duration);
                     yield return null;
                 }
-                _mainPart.transform.position = endPos;
+                _mainPart.transform.localPosition = endPos;
 
                 // Move from endPos back to startPos
                 elapsedTime = 0f;
                 while (elapsedTime < duration)
                 {
                     elapsedTime += Time.deltaTime;
-                    _mainPart.transform.position = Vector3.Lerp(endPos, startPos, elapsedTime / duration);
+                    _mainPart.transform.localPosition = Vector3.Lerp(endPos, startPos, elapsedTime / duration);
                     yield return null;
                 }
-                _mainPart.transform.position = startPos;
+                _mainPart.transform.localPosition = startPos;
             }
         }
         

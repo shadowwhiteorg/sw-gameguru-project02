@@ -23,7 +23,7 @@ namespace _Game.Systems.MeshSystem
             Platform mPlatform = mNewPlatformObj.AddComponent<Platform>();
             Vector3 mPlatformSize = new Vector3(platformWidth>0 ? platformWidth: initialPlatformSize.x,initialPlatformSize.y,initialPlatformSize.z);
 
-            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize,  mNewPlatformObj.transform.position, true);
+            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize,  mNewPlatformObj.transform.position - relativeSpawnPositionX*Vector3.right, true);
 
             mPlatform.Initialize(mMainMeshObject);
 

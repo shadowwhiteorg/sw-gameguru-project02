@@ -12,9 +12,11 @@ namespace _Game.Systems.MovementSystem
         [SerializeField] private float removeZThreshold = -10f; // Remove when behind player
 
         public float PlatformSpeed => platformSpeed;
+        private bool _isMoving = false;
 
         void Update()
         {
+            if(!_isMoving) return;
             MovePlatforms();
             CleanupPlatforms();
         }
@@ -25,6 +27,11 @@ namespace _Game.Systems.MovementSystem
             {
                 platform.transform.position += Vector3.back * (platformSpeed * Time.deltaTime);
             }
+        }
+
+        public void StartMovement()
+        {
+            _isMoving = true;
         }
 
         private void CleanupPlatforms()
