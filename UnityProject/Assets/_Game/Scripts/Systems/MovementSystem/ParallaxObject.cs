@@ -8,7 +8,7 @@ namespace _Game.Systems.MovementSystem
 
         void Update()
         {
-            transform.position += Vector3.back * (PlatformMovement.Instance.PlatformSpeed * parallaxSpeedMultiplier * Time.deltaTime);
+            transform.position += Vector3.back * (PlatformMovement.Instance.PlatformSpeed * parallaxSpeedMultiplier * Time.deltaTime*15);
         }
     }
 }
