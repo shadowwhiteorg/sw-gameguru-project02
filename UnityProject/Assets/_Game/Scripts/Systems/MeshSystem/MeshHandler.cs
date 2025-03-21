@@ -3,15 +3,19 @@ using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
+using CharacterController = _Game.Systems.CharacterSystem.CharacterController;
 
 namespace _Game.Systems.MeshSystem
 {
-    public class PlatformMeshHandler : Singleton<PlatformMeshHandler>
+    public class MeshHandler : Singleton<MeshHandler>
     {
         [SerializeField] private Material platformMaterial;
         [SerializeField] private Vector3 initialPlatformSize = new Vector3(4, 1, 4);
         [SerializeField] private float failRange = 0.25f;
         [SerializeField] private float comboTolerance = 0.2f;
+        [SerializeField] private float relativeSpawnPositionX = 2f;
+        
+        public float RelativeSpawnPositionX => relativeSpawnPositionX;
 
         public Platform GeneratePlatform(Vector3 position, float platformWidth = 0 )
         {
@@ -20,10 +24,12 @@ namespace _Game.Systems.MeshSystem
             Platform mPlatform = mNewPlatformObj.AddComponent<Platform>();
             Vector3 mPlatformSize = new Vector3(platformWidth>0 ? platformWidth: initialPlatformSize.x,initialPlatformSize.y,initialPlatformSize.z);
 
-            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize, position, true);
-
+            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize,  mNewPlatformObj.transform.position - relativeSpawnPositionX*Vector3.right, true);
+            
             mPlatform.Initialize(mMainMeshObject);
-
+            
+           
+            
             return mPlatform;
         }
 
@@ -105,6 +111,8 @@ namespace _Game.Systems.MeshSystem
             isSuccessful = true;
             originalPlatform.SetMainPart(mainMesh);
             originalPlatform.SetSlicedPart(slicedMesh);
+            
+            CharacterController.Instance.MoveToPlatformCenter(originalPlatform.MainPartPivot.x + originalPlatform.MainPartSize.x/2);
         }
     }
 }

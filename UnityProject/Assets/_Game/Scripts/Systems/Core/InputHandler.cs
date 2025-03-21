@@ -1,23 +1,26 @@
-﻿using System;
-using _Game.Systems.MeshSystem;
-using _Game.Systems.Test;
+﻿using _Game.DataStructures;
+using _Game.Utils;
 using UnityEngine;
 
 namespace _Game.Systems.Core
 {
     public class InputHandler : MonoBehaviour
     {
-        [SerializeField] private PlatformMeshHandlerTest meshHandlerTest;
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                meshHandlerTest.GenerateTestPlatform();
+                EventBus.Fire(new OnStopPlatformEvent());
             }
 
             if (Input.GetKeyDown(KeyCode.S))
             {
-                meshHandlerTest.SliceTestPlatform();
+                EventBus.Fire(new OnLevelStartEvent());
+            }
+
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                EventBus.Fire(new OnLevelInitializeEvent());
             }
         }
     }

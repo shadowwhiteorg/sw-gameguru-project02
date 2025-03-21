@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace _Game.Systems.Test
 {
-    public class PlatformMeshHandlerTest : MonoBehaviour
+    public class MeshHandlerTest : MonoBehaviour
     {
-        public PlatformMeshHandler meshHandler;
+        public MeshHandler meshHandler;
         public Material testMaterial;
 
         public Vector3 platformDimensions = new Vector3(5, 1, 2);

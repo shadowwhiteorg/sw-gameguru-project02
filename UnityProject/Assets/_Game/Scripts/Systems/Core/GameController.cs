@@ -1,49 +1,61 @@
-﻿using _Game.Systems.MeshSystem;
+﻿using _Game.DataStructures;
+using _Game.Systems.MeshSystem;
 using _Game.Systems.PlatformSystem;
 using UnityEngine;
-using UnityEngine.Serialization;
+using _Game.Utils;
 
 namespace _Game.Systems.Core
 {
-    public class GameController : MonoBehaviour
+    public class GameController : Singleton<GameController>
     {
-        [SerializeField] private PlatformMeshHandler meshHandler;
-        [SerializeField]private Platform _currentPlatform;
-        [SerializeField] private Platform _movingPlatform;
-        private void Start()
+        private Platform _currentPlatform;
+        private Platform _movingPlatform;
+
+        private void OnStopPlatform()
         {
-           CreateNewPlatform();
-           CreateNewMovingPlatform();
+            _movingPlatform.StopMoving();
+            if(!SliceCurrentPlatform()) return;
+            _movingPlatform.StartFalling();
+            _currentPlatform = _movingPlatform;
+            CreateNewMovingPlatform();
         }
-        
-        private void Update()
+
+        private void OnInitializeLevel()
         {
-            
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                _movingPlatform.StopMoving();
-                if(!SliceCurrentPlatform()) return;
-                _currentPlatform = _movingPlatform;
-                CreateNewMovingPlatform();
-            }
+            CreateNewPlatform();
+            CreateNewMovingPlatform();
         }
 
         private void CreateNewPlatform()
         {
-            _currentPlatform = meshHandler.GeneratePlatform( _currentPlatform ? _currentPlatform.MainPartPivot : Vector3.zero);
+            _currentPlatform = MeshHandler.Instance.GeneratePlatform( _currentPlatform ? _currentPlatform.MainPartPivot : Vector3.zero);
         }
         
         private void CreateNewMovingPlatform()
         {
             Vector3 newPosition = _currentPlatform.MainPartPivot + new Vector3(0, 0,_currentPlatform.MainPartSize.z);
-            _movingPlatform = meshHandler.GeneratePlatform( newPosition, _currentPlatform.MainPartSize.x);
-            _movingPlatform.StartMoving();
+            _movingPlatform = MeshHandler.Instance.GeneratePlatform( newPosition, _currentPlatform.MainPartSize.x);
+            _movingPlatform.MoveMainPart();
         }
-        
+
         private bool SliceCurrentPlatform()
         {
-            meshHandler.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x, _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x, out var successful);
+            MeshHandler.Instance.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x,
+                _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x, out var successful);
             return successful;
         }
+        
+        private void OnEnable()
+        {
+            EventBus.Subscribe<OnLevelInitializeEvent>(e => OnInitializeLevel());
+            EventBus.Subscribe<OnStopPlatformEvent>(e => OnStopPlatform());
+        }
+
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<OnLevelInitializeEvent>(e => OnInitializeLevel());
+            EventBus.Unsubscribe<OnStopPlatformEvent>(e => OnStopPlatform());
+        }
+        
     }
 }
