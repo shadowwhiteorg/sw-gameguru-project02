@@ -31,9 +31,14 @@ namespace _Game.Systems.MovementSystem
             }
         }
 
-        public void StartMovement()
+        private void StartMovement()
         {
             _isMoving = true;
+        }
+
+        private void StopMovement()
+        {
+            _isMoving = false;
         }
 
         private void CleanupPlatforms()
@@ -56,12 +61,13 @@ namespace _Game.Systems.MovementSystem
         private void OnEnable()
         {
             EventBus.Subscribe<OnLevelStartEvent>(e=> StartMovement());
+            EventBus.Subscribe<OnLevelFailEvent>(e=> StopMovement());
         }
 
         private void OnDisable()
         {
             EventBus.Unsubscribe<OnLevelStartEvent>(e=> StartMovement());
-
+            EventBus.Unsubscribe<OnLevelFailEvent>(e=> StopMovement());
         }
     }
 }
