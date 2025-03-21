@@ -4,9 +4,9 @@ using _Game.Systems.PlatformSystem;
 using UnityEngine;
 using _Game.Utils;
 
-namespace _Game.Systems.Core
+namespace _Game.Systems.PlatformSystem
 {
-    public class GameController : Singleton<GameController>
+    public class PlatformOperator : Singleton<PlatformOperator>
     {
         private Platform _currentPlatform;
         private Platform _movingPlatform;
