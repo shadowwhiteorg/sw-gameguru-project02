@@ -26,6 +26,7 @@ namespace _Game.Systems.LevelSystem
         public int CurrentLevel => PlayerPrefs.GetInt(GameConstants.PlayerPrefsLevel, 1);
         public LevelData CurrentLevelData => levelDataCatalog.Levels[CurrentLevel % levelDataCatalog.Levels.Count];
         
+        
 
         private void IncreaseStep()
         {
