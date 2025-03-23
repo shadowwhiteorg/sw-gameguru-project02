@@ -36,10 +36,16 @@ namespace _Game.Systems.CharacterSystem
         private void OnEnable()
         {
             EventBus.Subscribe<OnLevelWinEvent>(e=>body.PlayDanceAnimation());
+            EventBus.Subscribe<OnLevelStartEvent>(e=>body.PlayRunAnimation());
+            EventBus.Subscribe<OnLevelFailEvent>(e=>body.PlayFallAnimation());
+            EventBus.Subscribe<OnLevelInitializeEvent>(e=>body.PlayIdleAnimation());
         }
         private void OnDisable()
         {
             EventBus.Unsubscribe<OnLevelWinEvent>(e=>body.PlayDanceAnimation());
+            EventBus.Unsubscribe<OnLevelStartEvent>(e=>body.PlayRunAnimation());
+            EventBus.Unsubscribe<OnLevelFailEvent>(e=>body.PlayFallAnimation());
+            EventBus.Unsubscribe<OnLevelInitializeEvent>(e=>body.PlayIdleAnimation());
         }
     }
 }

@@ -15,7 +15,7 @@ namespace _Game.Systems.MeshSystem
         [SerializeField] private float comboTolerance = 0.2f;
         [SerializeField] private float relativeSpawnPositionX = 2f;
         
-        public float RelativeSpawnPositionX => relativeSpawnPositionX;
+        public float RelativeSpawnPositionX => initialPlatformSize.z/2;
         public float PlatformLength => initialPlatformSize.z;
 
         public Platform GeneratePlatform(Vector3 position, float platformWidth = 0 )
@@ -25,7 +25,7 @@ namespace _Game.Systems.MeshSystem
             Platform mPlatform = mNewPlatformObj.AddComponent<Platform>();
             Vector3 mPlatformSize = new Vector3(platformWidth>0 ? platformWidth: initialPlatformSize.x,initialPlatformSize.y,initialPlatformSize.z);
 
-            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize,  mNewPlatformObj.transform.position - relativeSpawnPositionX*Vector3.right, true);
+            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize,  mNewPlatformObj.transform.position - RelativeSpawnPositionX*Vector3.right, true);
             
             mPlatform.Initialize(mMainMeshObject);
             

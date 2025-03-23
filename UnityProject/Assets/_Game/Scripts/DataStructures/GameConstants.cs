@@ -7,7 +7,10 @@
         public const string IdleAnimationTrigger = "Idle";
         public const string RunAnimationTrigger = "Run";
         public const string DanceAnimationTrigger = "Dance";
-        public const string FallAnimationTrigger = "Fall";
-        
+        public const string FallAnimationTrigger = "Fail";
+
+        public const float CrossPlatformDistance = 1f;
+        public const float FirstPlatformOffset = 1.825f;
+
     }
 }

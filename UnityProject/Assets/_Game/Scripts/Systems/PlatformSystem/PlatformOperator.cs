@@ -35,7 +35,8 @@ namespace _Game.Systems.PlatformSystem
 
         private void CreateNewPlatform()
         {
-            _currentPlatform = MeshHandler.Instance.GeneratePlatform( _currentPlatform ? _currentPlatform.MainPartPivot : Vector3.zero);
+            // _currentPlatform = MeshHandler.Instance.GeneratePlatform(  Vector3.forward * GameConstants.FirstPlatformOffset + (_currentPlatform ? _currentPlatform.MainPartPivot : Vector3.zero));
+            _currentPlatform = MeshHandler.Instance.GeneratePlatform(Vector3.forward * GameConstants.FirstPlatformOffset);
         }
         
         private void CreateNewMovingPlatform()

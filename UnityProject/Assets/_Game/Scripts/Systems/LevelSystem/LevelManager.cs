@@ -37,7 +37,7 @@ namespace _Game.Systems.LevelSystem
         private void Initialize()
         {
             _player = PlayerController.Instance;
-            _finalPosition = CurrentLevelData.NumberOfPlatforms*MeshHandler.Instance.PlatformLength*Vector3.forward;
+            _finalPosition = (CurrentLevelData.NumberOfPlatforms*MeshHandler.Instance.PlatformLength + GameConstants.FirstPlatformOffset )*Vector3.forward;
             _finalPlatform = Instantiate(finalPlatformPrefab, _finalPosition, Quaternion.identity);
             _currentStep = 1;
             _isFinalStep = false;
@@ -45,7 +45,7 @@ namespace _Game.Systems.LevelSystem
 
         private IEnumerator CheckFinalLine()
         {
-            yield return new WaitUntil(() => _finalPlatform.transform.position.z <= _player.transform.position.z-0.5f);
+            yield return new WaitUntil(() => _finalPlatform.transform.position.z <= _player.transform.position.z-GameConstants.CrossPlatformDistance);
             EventBus.Fire(new OnLevelWinEvent());
         }
         
