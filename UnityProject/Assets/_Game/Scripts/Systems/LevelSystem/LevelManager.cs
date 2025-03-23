@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Game.DataStructures;
+using _Game.Scripts.Enums;
 using _Game.Systems.CharacterSystem;
+using _Game.Systems.Core;
 using _Game.Systems.MeshSystem;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
@@ -31,6 +33,7 @@ namespace _Game.Systems.LevelSystem
             if (_currentStep >= CurrentLevelData.NumberOfPlatforms)
             {
                 PlatformOperator.Instance.SetCanCreatePlatform(false);
+                GameManager.Instance.SetGameState(GameState.LevelEnd);
                 _isFinalStep = true;
                 StartCoroutine(CheckFinalLine());
             }
@@ -50,7 +53,7 @@ namespace _Game.Systems.LevelSystem
 
         private IEnumerator CheckFinalLine()
         {
-            yield return new WaitUntil(() => _finalPlatform.transform.position.z <= _player.transform.position.z-GameConstants.CrossPlatformDistance);
+            yield return new WaitUntil(() => _finalPlatform.transform.position.z <= _player.transform.position.z-GameConstants.FinalPlatformDistance);
             EventBus.Fire(new OnLevelWinEvent());
         }
 

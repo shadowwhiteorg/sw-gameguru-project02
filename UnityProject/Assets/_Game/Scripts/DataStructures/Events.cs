@@ -9,5 +9,5 @@
     public struct OnStopPlatformEvent{}
     public struct OnLoadLevelEvent{}
     
-    public struct OnPlayerOnNextPlatformEvent{}
+    public struct OnPlayerChangedPlatformEvent{}
 }

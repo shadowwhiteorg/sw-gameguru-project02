@@ -58,8 +58,8 @@ namespace _Game.Systems.MeshSystem
         public void SlicePlatform(Platform originalPlatform, float leftBound, float rightBound, out bool isSuccessful)
         {
             isSuccessful = false;
-            if (leftBound >= rightBound) return;
-
+            if (leftBound >= rightBound ) return;
+    
             float originalLeft = originalPlatform.MainPartPivot.x;
             float originalRight = originalLeft + originalPlatform.MainPartSize.x;
 

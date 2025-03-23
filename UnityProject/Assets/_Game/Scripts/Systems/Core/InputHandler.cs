@@ -1,4 +1,5 @@
 ﻿using _Game.DataStructures;
+using _Game.Scripts.Enums;
 using _Game.Utils;
 using UnityEngine;
 
@@ -10,7 +11,8 @@ namespace _Game.Systems.Core
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                EventBus.Fire(new OnStopPlatformEvent());
+                if(GameManager.Instance.GameState == GameState.InGame)
+                    EventBus.Fire(new OnStopPlatformEvent());
             }
 
             if (Input.GetKeyDown(KeyCode.S))
