@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Game.DataStructures;
+using _Game.Systems.LevelSystem;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
@@ -10,11 +11,12 @@ namespace _Game.Systems.MovementSystem
     public class PlatformMovement : Singleton<PlatformMovement>
     {
         [SerializeField] private List<Platform> activePlatforms = new List<Platform>();
-        [SerializeField] private float platformSpeed = 5f;
         [SerializeField] private float removeZThreshold = -10f; // Remove when behind player
-
-        public float PlatformSpeed => platformSpeed;
+        
+        private float _platformSpeed = 5f;
         private bool _isMoving = false;
+        
+        public float PlatformSpeed => LevelManager.Instance.CurrentLevelData.PlatformSpeed;
 
         void Update()
         {
@@ -23,24 +25,25 @@ namespace _Game.Systems.MovementSystem
             CleanupPlatforms();
         }
 
+        private void Initialize()
+        {
+            _isMoving = false;
+            _platformSpeed = LevelManager.Instance.CurrentLevelData.PlatformSpeed;
+        }
+
         private void MovePlatforms()
         {
             foreach (var platform in activePlatforms)
             {
-                platform.transform.position += Vector3.back * (platformSpeed * Time.deltaTime);
+                platform.transform.position += Vector3.back * (_platformSpeed * Time.deltaTime);
             }
         }
 
-        private void StartMovement()
+        private void SetMovement(bool start)
         {
-            _isMoving = true;
+            _isMoving = start;
         }
-
-        private void StopMovement()
-        {
-            _isMoving = false;
-        }
-
+        
         private void CleanupPlatforms()
         {
             for (int i = activePlatforms.Count - 1; i >= 0; i--)
@@ -60,14 +63,19 @@ namespace _Game.Systems.MovementSystem
 
         private void OnEnable()
         {
-            EventBus.Subscribe<OnLevelStartEvent>(e=> StartMovement());
-            EventBus.Subscribe<OnLevelFailEvent>(e=> StopMovement());
+            EventBus.Subscribe<OnLevelStartEvent>(e=> SetMovement(true));
+            EventBus.Subscribe<OnLevelFailEvent>(e=> SetMovement(false));
+            EventBus.Subscribe<OnLevelWinEvent>(e=>SetMovement(false));
+            EventBus.Subscribe<OnLevelInitializeEvent>(e=> Initialize());
         }
 
         private void OnDisable()
         {
-            EventBus.Unsubscribe<OnLevelStartEvent>(e=> StartMovement());
-            EventBus.Unsubscribe<OnLevelFailEvent>(e=> StopMovement());
+            EventBus.Unsubscribe<OnLevelStartEvent>(e=> SetMovement(true));
+            EventBus.Unsubscribe<OnLevelFailEvent>(e=> SetMovement(false));
+            EventBus.Unsubscribe<OnLevelWinEvent>(e=>SetMovement(false));
+            EventBus.Unsubscribe<OnLevelInitializeEvent>(e=> Initialize());
+
         }
     }
 }

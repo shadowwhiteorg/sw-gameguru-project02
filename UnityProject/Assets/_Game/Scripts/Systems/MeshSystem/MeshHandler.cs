@@ -1,9 +1,9 @@
 ﻿using _Game.DataStructures;
+using _Game.Systems.CharacterSystem;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
-using CharacterController = _Game.Systems.CharacterSystem.CharacterController;
 
 namespace _Game.Systems.MeshSystem
 {
@@ -16,6 +16,7 @@ namespace _Game.Systems.MeshSystem
         [SerializeField] private float relativeSpawnPositionX = 2f;
         
         public float RelativeSpawnPositionX => relativeSpawnPositionX;
+        public float PlatformLength => initialPlatformSize.z;
 
         public Platform GeneratePlatform(Vector3 position, float platformWidth = 0 )
         {
@@ -112,7 +113,7 @@ namespace _Game.Systems.MeshSystem
             originalPlatform.SetMainPart(mainMesh);
             originalPlatform.SetSlicedPart(slicedMesh);
             
-            CharacterController.Instance.MoveToPlatformCenter(originalPlatform.MainPartPivot.x + originalPlatform.MainPartSize.x/2);
+            PlayerController.Instance.MoveToPlatformCenter(originalPlatform.MainPartPivot.x + originalPlatform.MainPartSize.x/2);
         }
     }
 }

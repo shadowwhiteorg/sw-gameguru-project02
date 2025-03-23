@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c001a2cceeaa4a3388c49195efc32824, type: 3}
   m_Name: 00_LevelData
   m_EditorClassIdentifier: 
-  NumberOfPlatforms: 15
+  NumberOfPlatforms: 5
+  PlatformSpeed: 1.5
   InitialLevelSpeed: 1
   FinalLevelSpeed: 1.5

@@ -8,4 +8,6 @@
     public struct OnNextLevelEvent{}
     public struct OnStopPlatformEvent{}
     public struct OnLoadLevelEvent{}
+    
+    public struct OnPlayerOnNextPlatformEvent{}
 }

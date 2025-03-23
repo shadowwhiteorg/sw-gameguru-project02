@@ -1,4 +1,6 @@
-﻿using _Game.DataStructures;
+﻿using System;
+using _Game.DataStructures;
+using _Game.Systems.CharacterSystem;
 using _Game.Systems.MeshSystem;
 using _Game.Systems.PlatformSystem;
 using UnityEngine;
@@ -10,20 +12,25 @@ namespace _Game.Systems.PlatformSystem
     {
         private Platform _currentPlatform;
         private Platform _movingPlatform;
+        private bool _canCreatePlatform;
+        private PlayerController _player;
 
         private void OnStopPlatform()
         {
             _movingPlatform.StopMoving();
-            if(!SliceCurrentPlatform()) return;
+            if(!SliceOperation()) return;
             _movingPlatform.StartFalling();
             _currentPlatform = _movingPlatform;
-            CreateNewMovingPlatform();
+            if(_canCreatePlatform)
+                CreateNewMovingPlatform();
         }
-
+        
         private void OnInitializeLevel()
         {
+            _player = FindFirstObjectByType<PlayerController>();
             CreateNewPlatform();
             CreateNewMovingPlatform();
+            SetCanCreatePlatform(true);
         }
 
         private void CreateNewPlatform()
@@ -38,7 +45,12 @@ namespace _Game.Systems.PlatformSystem
             _movingPlatform.MoveMainPart();
         }
 
-        private bool SliceCurrentPlatform()
+        public void SetCanCreatePlatform(bool canCreate)
+        {
+            _canCreatePlatform = canCreate;
+        }
+
+        private bool SliceOperation()
         {
             MeshHandler.Instance.SlicePlatform(_movingPlatform, _currentPlatform.MainPartPivot.x,
                 _currentPlatform.MainPartPivot.x + _currentPlatform.MainPartSize.x, out var successful);

@@ -1,14 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using _Game.DataStructures;
 using _Game.Utils;
 using UnityEngine;
 
 namespace _Game.Systems.CharacterSystem
 {
-    public class CharacterController : Singleton<CharacterController>
+    public class PlayerController : Singleton<PlayerController>
     {
         [SerializeField] private CharacterBody body;
         [SerializeField] private float centerMovementSpeed;
+        
 
         public void MoveToPlatformCenter(float targetX)
         {
@@ -30,6 +31,15 @@ namespace _Game.Systems.CharacterSystem
             }
 
             body.transform.position = targetPosition;
+        }
+        
+        private void OnEnable()
+        {
+            EventBus.Subscribe<OnLevelWinEvent>(e=>body.PlayDanceAnimation());
+        }
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<OnLevelWinEvent>(e=>body.PlayDanceAnimation());
         }
     }
 }

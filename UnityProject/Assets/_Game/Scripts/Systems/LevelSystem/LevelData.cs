@@ -6,6 +6,8 @@ namespace _Game.Systems.LevelSystem
     public class LevelData : ScriptableObject
     {
         public int NumberOfPlatforms;
+        public float PlatformSpeed;
+        // Further implementation
         public float InitialLevelSpeed;
         public float FinalLevelSpeed;
         
