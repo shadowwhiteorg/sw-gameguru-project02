@@ -23,10 +23,16 @@ namespace _Game.Systems.Core
             startButton.onClick.AddListener(()=> EventBus.Fire(new OnLevelStartEvent()));
             
             nextLevelButton.onClick.RemoveAllListeners();
-            nextLevelButton.onClick.AddListener(()=> EventBus.Fire(new OnLoadLevelEvent()));
+            nextLevelButton.onClick.AddListener(()=> EventBus.Fire(new OnLevelInitializeEvent()));
             
             restartButton.onClick.RemoveAllListeners();
-            restartButton.onClick.AddListener(()=> EventBus.Fire(new OnLoadLevelEvent()));
+            restartButton.onClick.AddListener(()=> EventBus.Fire(new OnLevelInitializeEvent()));
+        }
+
+        private void OnLevelInitialized()
+        {
+            InitializeButtons();
+            InitializePanels();
         }
 
         private void OnLevelWin()
@@ -41,7 +47,7 @@ namespace _Game.Systems.Core
             losePanel.SetActive(true);
         }
 
-        private void OnLoadLevel()
+        private void InitializePanels()
         {
             inGamePanel.SetActive(false);
             winPanel.SetActive(false);
@@ -57,20 +63,18 @@ namespace _Game.Systems.Core
 
         private void OnEnable()
         {
-            EventBus.Subscribe<OnLevelInitializeEvent>(e=>InitializeButtons());
+            EventBus.Subscribe<OnLevelInitializeEvent>(e => OnLevelInitialized());
             EventBus.Subscribe<OnLevelStartEvent>(e=> OnStartLevel());
             EventBus.Subscribe<OnLevelWinEvent>(e=> OnLevelWin());
             EventBus.Subscribe<OnLevelFailEvent>(e=> OnLevelLose());
-            EventBus.Subscribe<OnLoadLevelEvent>(e=> OnLoadLevel());
         }
 
         private void OnDisable()
         {
-            EventBus.Unsubscribe<OnLevelInitializeEvent>(e=>InitializeButtons());
+            EventBus.Unsubscribe<OnLevelInitializeEvent>(e=>OnLevelInitialized());
             EventBus.Unsubscribe<OnLevelStartEvent>(e=> OnStartLevel());
             EventBus.Unsubscribe<OnLevelWinEvent>(e=> OnLevelWin());
             EventBus.Unsubscribe<OnLevelFailEvent>(e=> OnLevelLose());
-            EventBus.Unsubscribe<OnLoadLevelEvent>(e=> OnLoadLevel());
         }
     }
 }
