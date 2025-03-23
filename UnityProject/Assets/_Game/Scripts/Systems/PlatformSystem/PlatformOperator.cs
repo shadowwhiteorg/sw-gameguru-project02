@@ -1,6 +1,7 @@
 ﻿using System;
 using _Game.DataStructures;
 using _Game.Systems.CharacterSystem;
+using _Game.Systems.LevelSystem;
 using _Game.Systems.MeshSystem;
 using _Game.Systems.PlatformSystem;
 using UnityEngine;
@@ -37,12 +38,14 @@ namespace _Game.Systems.PlatformSystem
         {
             // _currentPlatform = MeshHandler.Instance.GeneratePlatform(  Vector3.forward * GameConstants.FirstPlatformOffset + (_currentPlatform ? _currentPlatform.MainPartPivot : Vector3.zero));
             _currentPlatform = MeshHandler.Instance.GeneratePlatform(Vector3.forward * GameConstants.FirstPlatformOffset);
+            LevelManager.Instance.RegisterLevelObject(_currentPlatform.gameObject);
         }
         
         private void CreateNewMovingPlatform()
         {
             Vector3 newPosition = _currentPlatform.MainPartPivot + new Vector3(0, 0,_currentPlatform.MainPartSize.z);
             _movingPlatform = MeshHandler.Instance.GeneratePlatform( newPosition, _currentPlatform.MainPartSize.x);
+            LevelManager.Instance.RegisterLevelObject(_movingPlatform.gameObject);
             _movingPlatform.MoveMainPart();
         }
 

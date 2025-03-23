@@ -10,11 +10,11 @@ namespace _Game.Systems.MovementSystem
 {
     public class PlatformMovement : Singleton<PlatformMovement>
     {
-        [SerializeField] private List<Platform> activePlatforms = new List<Platform>();
         [SerializeField] private float removeZThreshold = -10f; // Remove when behind player
         
         private float _platformSpeed = 5f;
         private bool _isMoving = false;
+        private List<Platform> _activePlatforms = new List<Platform>();
         
         public float PlatformSpeed => LevelManager.Instance.CurrentLevelData.PlatformSpeed;
 
@@ -28,12 +28,13 @@ namespace _Game.Systems.MovementSystem
         private void Initialize()
         {
             _isMoving = false;
+            _activePlatforms.Clear();
             _platformSpeed = LevelManager.Instance.CurrentLevelData.PlatformSpeed;
         }
 
         private void MovePlatforms()
         {
-            foreach (var platform in activePlatforms)
+            foreach (var platform in _activePlatforms)
             {
                 platform.transform.position += Vector3.back * (_platformSpeed * Time.deltaTime);
             }
@@ -46,19 +47,19 @@ namespace _Game.Systems.MovementSystem
         
         private void CleanupPlatforms()
         {
-            for (int i = activePlatforms.Count - 1; i >= 0; i--)
+            for (int i = _activePlatforms.Count - 1; i >= 0; i--)
             {
-                if (activePlatforms[i].transform.position.z < removeZThreshold)
+                if (_activePlatforms[i].transform.position.z < removeZThreshold)
                 {
-                    Destroy(activePlatforms[i].gameObject);
-                    activePlatforms.RemoveAt(i);
+                    Destroy(_activePlatforms[i].gameObject);
+                    _activePlatforms.RemoveAt(i);
                 }
             }
         }
 
         public void RegisterPlatform(Platform newPlatform)
         {
-            activePlatforms.Add(newPlatform);
+            _activePlatforms.Add(newPlatform);
         }
 
         private void OnEnable()
