@@ -1,9 +1,9 @@
 ﻿using _Game.DataStructures;
+using _Game.Systems.CharacterSystem;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
-using CharacterController = _Game.Systems.CharacterSystem.CharacterController;
 
 namespace _Game.Systems.MeshSystem
 {
@@ -15,7 +15,8 @@ namespace _Game.Systems.MeshSystem
         [SerializeField] private float comboTolerance = 0.2f;
         [SerializeField] private float relativeSpawnPositionX = 2f;
         
-        public float RelativeSpawnPositionX => relativeSpawnPositionX;
+        public float RelativeSpawnPositionX => initialPlatformSize.z/2;
+        public float PlatformLength => initialPlatformSize.z;
 
         public Platform GeneratePlatform(Vector3 position, float platformWidth = 0 )
         {
@@ -24,7 +25,7 @@ namespace _Game.Systems.MeshSystem
             Platform mPlatform = mNewPlatformObj.AddComponent<Platform>();
             Vector3 mPlatformSize = new Vector3(platformWidth>0 ? platformWidth: initialPlatformSize.x,initialPlatformSize.y,initialPlatformSize.z);
 
-            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize,  mNewPlatformObj.transform.position - relativeSpawnPositionX*Vector3.right, true);
+            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize,  mNewPlatformObj.transform.position - RelativeSpawnPositionX*Vector3.right, true);
             
             mPlatform.Initialize(mMainMeshObject);
             
@@ -57,8 +58,8 @@ namespace _Game.Systems.MeshSystem
         public void SlicePlatform(Platform originalPlatform, float leftBound, float rightBound, out bool isSuccessful)
         {
             isSuccessful = false;
-            if (leftBound >= rightBound) return;
-
+            if (leftBound >= rightBound ) return;
+    
             float originalLeft = originalPlatform.MainPartPivot.x;
             float originalRight = originalLeft + originalPlatform.MainPartSize.x;
 
@@ -112,7 +113,7 @@ namespace _Game.Systems.MeshSystem
             originalPlatform.SetMainPart(mainMesh);
             originalPlatform.SetSlicedPart(slicedMesh);
             
-            CharacterController.Instance.MoveToPlatformCenter(originalPlatform.MainPartPivot.x + originalPlatform.MainPartSize.x/2);
+            PlayerController.Instance.MoveToPlatformCenter(originalPlatform.MainPartPivot.x + originalPlatform.MainPartSize.x/2);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using _Game.DataStructures;
+﻿using System;
+using _Game.DataStructures;
+using _Game.Utils;
 using UnityEngine;
 
 namespace _Game.Systems.CharacterSystem
@@ -26,5 +28,7 @@ namespace _Game.Systems.CharacterSystem
         {
             animator.SetTrigger(GameConstants.DanceAnimationTrigger);
         }
+
+        
     }
 }
