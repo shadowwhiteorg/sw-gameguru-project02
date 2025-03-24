@@ -18,7 +18,7 @@ namespace _Game.Systems.LevelSystem
         [SerializeField] private GameObject finalPlatformPrefab;
 
         private int _currentStep;
-        private bool _isFinalStep;
+        private int _currentLevel;
         private Vector3 _finalPosition;
         private GameObject _finalPlatform;
         private PlayerController _player;
@@ -38,9 +38,14 @@ namespace _Game.Systems.LevelSystem
             {
                 PlatformOperator.Instance.SetCanCreatePlatform(false);
                 GameManager.Instance.SetGameState(GameState.LevelEnd);
-                _isFinalStep = true;
                 StartCoroutine(CheckFinalLine());
             }
+        }
+
+        private void UpdateCurrentLevel()
+        {
+            _currentLevel = CurrentLevel + 1;
+            PlayerPrefs.SetInt(GameConstants.PlayerPrefsLevel, _currentLevel);
         }
 
         private void Initialize()
@@ -52,7 +57,6 @@ namespace _Game.Systems.LevelSystem
             _finalPlatform = Instantiate(finalPlatformPrefab, _finalPosition, Quaternion.identity);
             _levelObjects.Add(_finalPlatform);
             _currentStep = 1;
-            _isFinalStep = false;
         }
 
         private IEnumerator CheckFinalLine()
@@ -65,13 +69,7 @@ namespace _Game.Systems.LevelSystem
         {
             _levelObjects.Add(levelObject);
         }
-
-        public void UnregisterLevelObject(GameObject levelObject)
-        {
-            if(_levelObjects.Contains(levelObject))
-                _levelObjects.Remove(levelObject);
-        }
-
+        
         private void ResetLevelObjects()
         {
             foreach (var levelObject in _levelObjects)
@@ -85,13 +83,14 @@ namespace _Game.Systems.LevelSystem
         {
             EventBus.Subscribe<OnLevelInitializeEvent>(e=>Initialize());
             EventBus.Subscribe<OnStopPlatformEvent>(e=> IncreaseStep());
+            EventBus.Subscribe<OnLevelWinEvent>(e=>UpdateCurrentLevel());
         }
 
         private void OnDisable()
         {
             EventBus.Unsubscribe<OnLevelInitializeEvent>(e=>Initialize());
             EventBus.Unsubscribe<OnStopPlatformEvent>(e=> IncreaseStep());
-
+            EventBus.Unsubscribe<OnLevelWinEvent>(e=>UpdateCurrentLevel());
         }
     }
 }

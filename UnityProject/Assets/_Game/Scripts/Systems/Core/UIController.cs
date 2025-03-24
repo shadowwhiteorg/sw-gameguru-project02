@@ -1,5 +1,7 @@
 ﻿using _Game.DataStructures;
+using _Game.Systems.LevelSystem;
 using _Game.Utils;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +17,7 @@ namespace _Game.Systems.Core
         [SerializeField] private Button startButton;
         [SerializeField] private Button nextLevelButton;
         [SerializeField] private Button restartButton;
+        [SerializeField] private TextMeshProUGUI levelNumberText;
         
         
         private void InitializeButtons()
@@ -45,6 +48,7 @@ namespace _Game.Systems.Core
         {
             InitializeButtons();
             InitializePanels();
+            levelNumberText.text = LevelManager.Instance.CurrentLevel.ToString();
         }
 
         private void OnLevelWin()
