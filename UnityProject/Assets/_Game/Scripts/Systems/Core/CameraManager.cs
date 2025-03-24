@@ -13,7 +13,6 @@ namespace _Game.Systems.Core
 
         private bool _canRotate;
 
-
         private void WinCameraAnimation()
         {
             winCameraParent.transform.rotation = Quaternion.Euler(Vector3.zero);

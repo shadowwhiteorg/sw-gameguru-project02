@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8cc61468078471bb5b13c8ec5ffbb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _platformMaterial: {fileID: 2100000, guid: 644e0d1dd3e717e43b18768b7fc7532f, type: 2}
-  _initialPlatformSize: {x: 4, y: 1, z: 4}
-  _failRange: 0.1
-  _comboTolerance: 0.15
+  platformMaterial: {fileID: 2100000, guid: dd347e81ce36318498797e58da2bb346, type: 2}
+  initialPlatformSize: {x: 4, y: 1, z: 4}
+  failRange: 0.25
+  comboTolerance: 0.2

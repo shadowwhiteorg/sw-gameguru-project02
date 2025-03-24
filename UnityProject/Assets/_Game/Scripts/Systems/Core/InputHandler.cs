@@ -8,7 +8,6 @@ namespace _Game.Systems.Core
 {
     public class InputHandler : MonoBehaviour
     {
-
         private bool _canStopPlatform;
         
         private void Update()

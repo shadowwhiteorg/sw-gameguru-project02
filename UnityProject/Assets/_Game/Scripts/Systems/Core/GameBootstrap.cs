@@ -24,20 +24,15 @@ namespace _Game.Systems.Core
             var platformMovement = Instantiate(platformMovementPrefab);
             var platformOperator = Instantiate(platformOperatorPrefab);
             
+            // Get singleton instances
             var playerController = PlayerController.Instance;
             var uiController = UIController.Instance;
 
             // Initialize dependencies
             meshHandler.Initialize(playerController, platformMovement);
             platformMovement.Initialize(levelManager);
-            platformOperator.Initialize(
-                meshHandler,
-                levelManager,
-                platformMovement,
-                playerController
-            );
+            platformOperator.Initialize(meshHandler, levelManager);
             levelManager.Initialize(platformOperator,playerController,meshHandler);
-            playerController.Initialize(platformOperator);
             uiController.Initialize(levelManager);
         }
     }
