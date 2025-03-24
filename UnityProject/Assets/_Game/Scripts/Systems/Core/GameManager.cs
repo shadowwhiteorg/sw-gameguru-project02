@@ -14,7 +14,7 @@ namespace _Game.Systems.Core
 
         private void Start()
         {
-            EventBus.Fire(new OnLevelInitializeEvent());
+            // EventBus.Fire(new OnLevelInitializeEvent());
         }
 
         public void SetGameState(GameState gameState)

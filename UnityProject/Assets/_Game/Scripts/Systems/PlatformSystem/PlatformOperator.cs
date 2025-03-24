@@ -17,8 +17,8 @@ namespace _Game.Systems.PlatformSystem
         private Platform _currentPlatform;
         private Platform _lastPlatform;
         private Platform _movingPlatform;
-        private bool _canCreatePlatform;
         private PlayerController _player;
+        private bool _canCreatePlatform;
         private bool _hasPlatformStopped;
 
         private IEnumerator WaitPlatformCheck()
@@ -31,7 +31,6 @@ namespace _Game.Systems.PlatformSystem
         {
             if(GameManager.Instance.GameState == GameState.InGame)
                 CheckUnstopCondition();
-                
         }
 
         private bool HasPlatformChanged()
@@ -51,7 +50,6 @@ namespace _Game.Systems.PlatformSystem
             _player = FindFirstObjectByType<PlayerController>();
             CreateNewPlatform();
             SetCanCreatePlatform(true);
-            // CreateNewMovingPlatform();
             _hasPlatformStopped = true;
             StartCoroutine(WaitPlatformCheck());
         }
@@ -110,9 +108,9 @@ namespace _Game.Systems.PlatformSystem
         
         private void OnEnable()
         {
+            EventBus.Subscribe<OnPlayerChangedPlatformEvent>(e => OnPlayerChangedPlatform());
             EventBus.Subscribe<OnLevelInitializeEvent>(e => OnInitializeLevel());
             EventBus.Subscribe<OnStopPlatformEvent>(e => OnStopPlatform());
-            EventBus.Subscribe<OnPlayerChangedPlatformEvent>(e => OnPlayerChangedPlatform());
         }
 
         private void OnDisable()

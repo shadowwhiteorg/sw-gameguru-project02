@@ -78,7 +78,6 @@ namespace _Game.Systems.LevelSystem
             {
                 Destroy(levelObject);
             }
-            
             _levelObjects.Clear();
         }
         
