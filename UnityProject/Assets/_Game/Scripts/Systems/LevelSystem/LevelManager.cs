@@ -25,8 +25,11 @@ namespace _Game.Systems.LevelSystem
         private List<GameObject> _levelObjects = new List<GameObject>();
         public int CurrentLevel => PlayerPrefs.GetInt(GameConstants.PlayerPrefsLevel, 1);
         public LevelData CurrentLevelData => levelDataCatalog.Levels[CurrentLevel % levelDataCatalog.Levels.Count];
-        
-        
+
+        private void Start()
+        {
+            EventBus.Fire(new OnLevelInitializeEvent());
+        }
 
         private void IncreaseStep()
         {
@@ -65,7 +68,8 @@ namespace _Game.Systems.LevelSystem
 
         public void UnregisterLevelObject(GameObject levelObject)
         {
-            _levelObjects.Remove(levelObject);
+            if(_levelObjects.Contains(levelObject))
+                _levelObjects.Remove(levelObject);
         }
 
         private void ResetLevelObjects()

@@ -20,13 +20,25 @@ namespace _Game.Systems.Core
         private void InitializeButtons()
         {
             startButton.onClick.RemoveAllListeners();
-            startButton.onClick.AddListener(()=> EventBus.Fire(new OnLevelStartEvent()));
+            startButton.onClick.AddListener(()=>
+            {
+                EventBus.Fire(new OnButtonClickedEvent());
+                EventBus.Fire(new OnLevelStartEvent());
+            });
             
             nextLevelButton.onClick.RemoveAllListeners();
-            nextLevelButton.onClick.AddListener(()=> EventBus.Fire(new OnLevelInitializeEvent()));
+            nextLevelButton.onClick.AddListener(()=>
+            {
+                EventBus.Fire(new OnButtonClickedEvent());
+                EventBus.Fire(new OnLevelInitializeEvent());
+            });
             
             restartButton.onClick.RemoveAllListeners();
-            restartButton.onClick.AddListener(()=> EventBus.Fire(new OnLevelInitializeEvent()));
+            restartButton.onClick.AddListener(()=>
+            {
+                EventBus.Fire(new OnButtonClickedEvent());
+                EventBus.Fire(new OnLevelInitializeEvent());
+            });
         }
 
         private void OnLevelInitialized()
