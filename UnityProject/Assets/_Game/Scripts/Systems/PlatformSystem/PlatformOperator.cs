@@ -14,7 +14,6 @@ namespace _Game.Systems.PlatformSystem
     public class PlatformOperator : MonoBehaviour, IPlatformManager
     {
         private Platform _currentPlatform;
-        private Platform _lastPlatform;
         private Platform _movingPlatform;
         private PlayerController _player;
         private bool _canCreatePlatform;
@@ -23,22 +22,11 @@ namespace _Game.Systems.PlatformSystem
         // Dependencies
         private IMeshHandler _meshHandler;
         private ILevelManager _levelManager;
-        private IPlatformMovement _platformMovement;
-        private PlayerController _playerController;
 
-        public void Initialize(MeshHandler meshHandler, LevelManager levelManager, IPlatformMovement platformMovement,
-            PlayerController playerController)
+        public void Initialize(MeshHandler meshHandler, LevelManager levelManager)
         {
             _meshHandler = meshHandler;
             _levelManager = levelManager;
-            _platformMovement = platformMovement;
-            _playerController = playerController;
-        }
-
-        private IEnumerator WaitPlatformCheck()
-        {
-            yield return new WaitUntil(HasPlatformChanged);
-            EventBus.Fire(new OnPlayerChangedPlatformEvent());
         }
 
         private void Update()
@@ -47,17 +35,9 @@ namespace _Game.Systems.PlatformSystem
                 CheckUnstopCondition();
         }
 
-        private bool HasPlatformChanged()
-        {
-            return _player.transform.position.z >=
-                   _currentPlatform?.transform.position.z - GameConstants.PlatformChangeOffset;
-        }
-
         private void CheckUnstopCondition()
         {
-            if (!_movingPlatform) return;
-            if (_movingPlatform.transform.position.z <=
-                _player.transform.position.z + GameConstants.PlatformChangeOffset)
+            if (_movingPlatform && _movingPlatform.transform.position.z <= _player.transform.position.z + GameConstants.PlatformChangeOffset)
                 EventBus.Fire(new OnLevelFailEvent());
         }
 
@@ -73,12 +53,14 @@ namespace _Game.Systems.PlatformSystem
         private void OnStopPlatform()
         {
             _movingPlatform?.StopMoving();
-            if (!SliceOperation()) return;
-            _movingPlatform?.StartFalling();
-            _currentPlatform = _movingPlatform;
-            _movingPlatform = null;
-            _hasPlatformStopped = true;
-            StartCoroutine(WaitPlatformCheck());
+            if (SliceOperation())
+            {
+                _movingPlatform?.StartFalling();
+                _currentPlatform = _movingPlatform;
+                _movingPlatform = null;
+                _hasPlatformStopped = true;
+                StartCoroutine(WaitPlatformCheck());
+            }
         }
 
         private void CreateNewPlatform()
@@ -96,7 +78,6 @@ namespace _Game.Systems.PlatformSystem
             }
 
             CreateNewMovingPlatform();
-
         }
 
         private void CreateNewMovingPlatform()
@@ -107,7 +88,6 @@ namespace _Game.Systems.PlatformSystem
             _movingPlatform = _meshHandler.GeneratePlatform(newPosition, _currentPlatform.MainPartSize.x);
             _levelManager.RegisterLevelObject(_movingPlatform.gameObject);
             _movingPlatform.MoveMainPart();
-
         }
 
         public void SetCanCreatePlatform(bool canCreate)
@@ -122,6 +102,17 @@ namespace _Game.Systems.PlatformSystem
             return successful;
         }
 
+        private IEnumerator WaitPlatformCheck()
+        {
+            yield return new WaitUntil(HasPlatformChanged);
+            EventBus.Fire(new OnPlayerChangedPlatformEvent());
+        }
+
+        private bool HasPlatformChanged()
+        {
+            return _player.transform.position.z >= _currentPlatform?.transform.position.z - GameConstants.PlatformChangeOffset;
+        }
+
         private void OnEnable()
         {
             EventBus.Subscribe<OnPlayerChangedPlatformEvent>(e => OnPlayerChangedPlatform());
@@ -134,7 +125,6 @@ namespace _Game.Systems.PlatformSystem
             EventBus.Unsubscribe<OnLevelInitializeEvent>(e => OnInitializeLevel());
             EventBus.Unsubscribe<OnStopPlatformEvent>(e => OnStopPlatform());
             EventBus.Unsubscribe<OnPlayerChangedPlatformEvent>(e => OnPlayerChangedPlatform());
-
         }
     }
 }

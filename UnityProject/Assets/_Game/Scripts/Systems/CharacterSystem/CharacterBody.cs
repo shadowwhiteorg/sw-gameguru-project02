@@ -1,6 +1,4 @@
-﻿using System;
-using _Game.DataStructures;
-using _Game.Utils;
+﻿using _Game.DataStructures;
 using UnityEngine;
 
 namespace _Game.Systems.CharacterSystem

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using _Game.DataStructures;
 using _Game.Interfaces;
-using _Game.Scripts.Enums;
 using _Game.Systems.CharacterSystem;
-using _Game.Systems.Core;
 using _Game.Systems.MeshSystem;
 using _Game.Systems.MovementSystem;
-using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Game.Systems.LevelSystem
 {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using _Game.DataStructures;
 using _Game.Interfaces;
-using _Game.Systems.LevelSystem;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Game.Systems.MovementSystem
 {

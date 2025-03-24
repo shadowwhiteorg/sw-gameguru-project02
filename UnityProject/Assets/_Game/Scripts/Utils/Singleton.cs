@@ -10,7 +10,7 @@ namespace _Game.Utils
         {
             get
             {
-                if (_instance == null)
+                if (!_instance)
                 {
                     _instance = FindFirstObjectByType<T>();
                 }

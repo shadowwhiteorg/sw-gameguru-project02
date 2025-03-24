@@ -1,8 +1,5 @@
-﻿using System;
-using _Game.DataStructures;
-using _Game.Systems.LevelSystem;
+﻿using _Game.DataStructures;
 using _Game.Utils;
-using UnityEngine;
 using _Game.Interfaces;
 
 namespace _Game.Systems.MovementSystem
@@ -12,7 +9,7 @@ namespace _Game.Systems.MovementSystem
     public class ParallaxObject : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private float _parallaxSpeedMultiplier = 0.5f;
+        [SerializeField] private float parallaxSpeedMultiplier = 0.5f;
 
         private IPlatformMovement _platformMovement;
         private ILevelManager _levelManager;
@@ -29,7 +26,7 @@ namespace _Game.Systems.MovementSystem
             {
                 transform.position += Vector3.back * (
                     _levelManager.CurrentLevelData.PlatformSpeed * 
-                    _parallaxSpeedMultiplier * 
+                    parallaxSpeedMultiplier * 
                     Time.deltaTime
                 );
             }
