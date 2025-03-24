@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using _Game.DataStructures;
 using _Game.Scripts.Enums;
 using _Game.Systems.CharacterSystem;
 using _Game.Systems.Core;
 using _Game.Systems.LevelSystem;
 using _Game.Systems.MeshSystem;
-using _Game.Systems.PlatformSystem;
 using UnityEngine;
 using _Game.Utils;
 
@@ -17,8 +15,8 @@ namespace _Game.Systems.PlatformSystem
         private Platform _currentPlatform;
         private Platform _lastPlatform;
         private Platform _movingPlatform;
-        private bool _canCreatePlatform;
         private PlayerController _player;
+        private bool _canCreatePlatform;
         private bool _hasPlatformStopped;
 
         private IEnumerator WaitPlatformCheck()
@@ -31,7 +29,6 @@ namespace _Game.Systems.PlatformSystem
         {
             if(GameManager.Instance.GameState == GameState.InGame)
                 CheckUnstopCondition();
-                
         }
 
         private bool HasPlatformChanged()
@@ -51,7 +48,6 @@ namespace _Game.Systems.PlatformSystem
             _player = FindFirstObjectByType<PlayerController>();
             CreateNewPlatform();
             SetCanCreatePlatform(true);
-            // CreateNewMovingPlatform();
             _hasPlatformStopped = true;
             StartCoroutine(WaitPlatformCheck());
         }
@@ -80,7 +76,6 @@ namespace _Game.Systems.PlatformSystem
                 EventBus.Fire(new OnLevelFailEvent());
                 return;
             }
-            
             CreateNewMovingPlatform();
                 
         }
@@ -110,9 +105,9 @@ namespace _Game.Systems.PlatformSystem
         
         private void OnEnable()
         {
+            EventBus.Subscribe<OnPlayerChangedPlatformEvent>(e => OnPlayerChangedPlatform());
             EventBus.Subscribe<OnLevelInitializeEvent>(e => OnInitializeLevel());
             EventBus.Subscribe<OnStopPlatformEvent>(e => OnStopPlatform());
-            EventBus.Subscribe<OnPlayerChangedPlatformEvent>(e => OnPlayerChangedPlatform());
         }
 
         private void OnDisable()

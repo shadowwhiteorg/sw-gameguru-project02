@@ -1,4 +1,5 @@
-﻿using _Game.DataStructures;
+﻿using System;
+using _Game.DataStructures;
 using _Game.Systems.CharacterSystem;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
@@ -13,10 +14,12 @@ namespace _Game.Systems.MeshSystem
         [SerializeField] private Vector3 initialPlatformSize = new Vector3(4, 1, 4);
         [SerializeField] private float failRange = 0.25f;
         [SerializeField] private float comboTolerance = 0.2f;
-        [SerializeField] private float relativeSpawnPositionX = 2f;
         
         public float RelativeSpawnPositionX => initialPlatformSize.z/2;
         public float PlatformLength => initialPlatformSize.z;
+        
+        private int _comboCount;
+        private bool _isComboActive;
 
         public Platform GeneratePlatform(Vector3 position, float platformWidth = 0 )
         {
@@ -97,23 +100,43 @@ namespace _Game.Systems.MeshSystem
             bool isOutsideBounds = leftBound > originalRight || rightBound < originalLeft;
             if (mainMeshSize.x <= failRange || isOutsideBounds)
             {
-                Debug.Log("Fail");
                 EventBus.Fire(new OnLevelFailEvent());
                 return;
             }
-            
-            if(slicedMeshSize.x<=comboTolerance)
-                EventBus.Fire(new OnComboEvent());
+
+            _isComboActive = false;
+            if (slicedMeshSize.x <= comboTolerance)
+            {
+                _isComboActive = true;
+                _comboCount++;
+                EventBus.Fire(new OnComboEvent(_comboCount));
+            }
+            if (!_isComboActive) _comboCount = 1;
+                
 
             GameObject mainMesh = GeneratePlatformMesh(originalPlatform, mainMeshSize, mainMeshPosition, true);
             GameObject slicedMesh = GeneratePlatformMesh(originalPlatform, slicedMeshSize, slicedMeshPosition, false);
 
-           
             isSuccessful = true;
             originalPlatform.SetMainPart(mainMesh);
             originalPlatform.SetSlicedPart(slicedMesh);
             
             PlayerController.Instance.MoveToPlatformCenter(originalPlatform.MainPartPivot.x + originalPlatform.MainPartSize.x/2);
+        }
+
+        private void OnLevelInitialized()
+        {
+            _comboCount = 1;
+        }
+
+        private void OnEnable()
+        {
+            EventBus.Subscribe<OnLevelInitializeEvent>(e => OnLevelInitialized());
+        }
+        
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<OnLevelInitializeEvent>(e => OnLevelInitialized());
         }
     }
 }
