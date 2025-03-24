@@ -14,7 +14,6 @@ namespace _Game.Systems.MeshSystem
         [SerializeField] private Vector3 initialPlatformSize = new Vector3(4, 1, 4);
         [SerializeField] private float failRange = 0.25f;
         [SerializeField] private float comboTolerance = 0.2f;
-        [SerializeField] private float relativeSpawnPositionX = 2f;
         
         public float RelativeSpawnPositionX => initialPlatformSize.z/2;
         public float PlatformLength => initialPlatformSize.z;
@@ -101,7 +100,6 @@ namespace _Game.Systems.MeshSystem
             bool isOutsideBounds = leftBound > originalRight || rightBound < originalLeft;
             if (mainMeshSize.x <= failRange || isOutsideBounds)
             {
-                Debug.Log("Fail");
                 EventBus.Fire(new OnLevelFailEvent());
                 return;
             }

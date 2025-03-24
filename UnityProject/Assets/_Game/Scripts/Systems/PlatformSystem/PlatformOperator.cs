@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using _Game.DataStructures;
 using _Game.Scripts.Enums;
 using _Game.Systems.CharacterSystem;
 using _Game.Systems.Core;
 using _Game.Systems.LevelSystem;
 using _Game.Systems.MeshSystem;
-using _Game.Systems.PlatformSystem;
 using UnityEngine;
 using _Game.Utils;
 
@@ -78,7 +76,6 @@ namespace _Game.Systems.PlatformSystem
                 EventBus.Fire(new OnLevelFailEvent());
                 return;
             }
-            
             CreateNewMovingPlatform();
                 
         }
