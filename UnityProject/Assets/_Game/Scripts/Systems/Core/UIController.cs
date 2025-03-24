@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace _Game.Systems.Core
 {
-    public class UIController : MonoBehaviour
+    public class UIController : Singleton<UIController>
     {
         [SerializeField] private Canvas canvas;
         [SerializeField] private GameObject winPanel;
@@ -19,6 +19,13 @@ namespace _Game.Systems.Core
         [SerializeField] private Button restartButton;
         [SerializeField] private TextMeshProUGUI levelNumberText;
         
+        private LevelManager _levelManager;
+
+        public void Initialize(LevelManager levelManager)
+        {
+            _levelManager = levelManager;
+            OnLevelInitialized();
+        }
         
         private void InitializeButtons()
         {
@@ -48,7 +55,7 @@ namespace _Game.Systems.Core
         {
             InitializeButtons();
             InitializePanels();
-            levelNumberText.text = LevelManager.Instance.CurrentLevel.ToString();
+            levelNumberText.text = _levelManager.CurrentLevel.ToString();
         }
 
         private void OnLevelWin()

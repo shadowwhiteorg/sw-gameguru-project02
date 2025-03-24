@@ -1,5 +1,6 @@
 ﻿using System;
 using _Game.DataStructures;
+using _Game.Interfaces;
 using _Game.Systems.CharacterSystem;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
@@ -8,54 +9,63 @@ using UnityEngine.Serialization;
 
 namespace _Game.Systems.MeshSystem
 {
-    public class MeshHandler : Singleton<MeshHandler>
+    public class MeshHandler : MonoBehaviour, IMeshHandler
     {
-        [SerializeField] private Material platformMaterial;
-        [SerializeField] private Vector3 initialPlatformSize = new Vector3(4, 1, 4);
-        [SerializeField] private float failRange = 0.25f;
-        [SerializeField] private float comboTolerance = 0.2f;
+        [Header("Settings")]
+        [SerializeField] private Material _platformMaterial;
+        [SerializeField] private Vector3 _initialPlatformSize = new Vector3(4, 1, 4);
+        [SerializeField] private float _failRange = 0.25f;
+        [SerializeField] private float _comboTolerance = 0.2f;
         
-        public float RelativeSpawnPositionX => initialPlatformSize.z/2;
-        public float PlatformLength => initialPlatformSize.z;
-        
+    
         private int _comboCount;
         private bool _isComboActive;
+        private PlayerController _playerController;
+        public float PlatformLength => _initialPlatformSize.z;
+        public float RelativeSpawnPositionX => _initialPlatformSize.z / 2;
 
-        public Platform GeneratePlatform(Vector3 position, float platformWidth = 0 )
+        public void Initialize(PlayerController playerController)
         {
-            GameObject mNewPlatformObj = new GameObject("Platform");
-            mNewPlatformObj.transform.position = position;
-            Platform mPlatform = mNewPlatformObj.AddComponent<Platform>();
-            Vector3 mPlatformSize = new Vector3(platformWidth>0 ? platformWidth: initialPlatformSize.x,initialPlatformSize.y,initialPlatformSize.z);
+            _playerController = playerController;
+        }
+        public Platform GeneratePlatform(Vector3 position, float platformWidth = 0)
+        {
+            var platformObj = new GameObject("Platform");
+            platformObj.transform.position = position;
+            var platform = platformObj.AddComponent<Platform>();
+        
+            var platformSize = new Vector3(
+                platformWidth > 0 ? platformWidth : _initialPlatformSize.x,
+                _initialPlatformSize.y,
+                _initialPlatformSize.z
+            );
 
-            GameObject mMainMeshObject = GeneratePlatformMesh(mPlatform,  mPlatformSize,  mNewPlatformObj.transform.position - RelativeSpawnPositionX*Vector3.right, true);
-            
-            mPlatform.Initialize(mMainMeshObject);
-            
-           
-            
-            return mPlatform;
+            var mainMesh = GeneratePlatformMesh(platform, platformSize, 
+                platformObj.transform.position - RelativeSpawnPositionX * Vector3.right, true);
+        
+            platform.Initialize(mainMesh);
+            return platform;
         }
 
-        private GameObject GeneratePlatformMesh(Platform platform, Vector3 dimensions, Vector3 position, bool isMain)
+        private GameObject GeneratePlatformMesh(Platform platform, Vector3 dimensions, 
+            Vector3 position, bool isMain)
         {
-            GameObject mMeshObject = new GameObject(isMain ? "MainMesh" : "SlicedMesh");
-            mMeshObject.transform.position = position;
-            mMeshObject.transform.SetParent(platform.transform);
+            var meshObj = new GameObject(isMain ? "MainMesh" : "SlicedMesh");
+            meshObj.transform.position = position;
+            meshObj.transform.SetParent(platform.transform);
 
-            MeshFilter mMeshFilter = mMeshObject.AddComponent<MeshFilter>();
-            MeshRenderer mMeshRenderer = mMeshObject.AddComponent<MeshRenderer>();
-            mMeshRenderer.material = platformMaterial;
+            var filter = meshObj.AddComponent<MeshFilter>();
+            var renderer = meshObj.AddComponent<MeshRenderer>();
+            renderer.material = _platformMaterial;
 
-            Mesh mMesh = MeshGenerator.CreateMesh(dimensions);
-            mMeshFilter.mesh = mMesh;
+            filter.mesh = MeshGenerator.CreateMesh(dimensions);
 
             if (isMain)
-                platform.SetMainPart(mMeshObject);
+                platform.SetMainPart(meshObj);
             else
-                platform.SetSlicedPart(mMeshObject);
+                platform.SetSlicedPart(meshObj);
 
-            return mMeshFilter.gameObject;
+            return meshObj;
         }
 
         public void SlicePlatform(Platform originalPlatform, float leftBound, float rightBound, out bool isSuccessful)
@@ -98,14 +108,14 @@ namespace _Game.Systems.MeshSystem
               
             originalPlatform.MainPart.SetActive(false);
             bool isOutsideBounds = leftBound > originalRight || rightBound < originalLeft;
-            if (mainMeshSize.x <= failRange || isOutsideBounds)
+            if (mainMeshSize.x <= _failRange || isOutsideBounds)
             {
                 EventBus.Fire(new OnLevelFailEvent());
                 return;
             }
 
             _isComboActive = false;
-            if (slicedMeshSize.x <= comboTolerance)
+            if (slicedMeshSize.x <= _comboTolerance)
             {
                 _isComboActive = true;
                 _comboCount++;
@@ -121,7 +131,7 @@ namespace _Game.Systems.MeshSystem
             originalPlatform.SetMainPart(mainMesh);
             originalPlatform.SetSlicedPart(slicedMesh);
             
-            PlayerController.Instance.MoveToPlatformCenter(originalPlatform.MainPartPivot.x + originalPlatform.MainPartSize.x/2);
+            _playerController.MoveToPlatformCenter(originalPlatform.MainPartPivot.x + originalPlatform.MainPartSize.x/2);
         }
 
         private void OnLevelInitialized()
