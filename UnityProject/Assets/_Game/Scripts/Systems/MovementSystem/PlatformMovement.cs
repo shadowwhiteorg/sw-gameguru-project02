@@ -1,50 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Game.DataStructures;
+using _Game.Interfaces;
 using _Game.Systems.LevelSystem;
 using _Game.Systems.PlatformSystem;
 using _Game.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Game.Systems.MovementSystem
 {
-    public class PlatformMovement : Singleton<PlatformMovement>
+    public class PlatformMovement : MonoBehaviour, IPlatformMovement
     {
-        [SerializeField] private float removeZThreshold = -10f; // Remove when behind player
-        
-        private float _platformSpeed = 5f;
-        private bool _isMoving = false;
+        [Header("Settings")]
+        [SerializeField] private float removeZThreshold = -10f;
+    
+        // Dependencies
+        private ILevelManager _levelManager;
         private List<Platform> _activePlatforms = new List<Platform>();
-        
-        public float PlatformSpeed => LevelManager.Instance.CurrentLevelData.PlatformSpeed;
+        private bool _isMoving;
 
-        void Update()
+        public void Initialize(ILevelManager levelManager)
         {
-            if(!_isMoving) return;
+            _activePlatforms.Clear();
+            _levelManager = levelManager;
+        }
+        public float PlatformSpeed => _levelManager.CurrentLevelData.PlatformSpeed;
+        public float CurrentSpeed { get; }
+        private void Update()
+        {
+            if (!_isMoving) return;
+        
             MovePlatforms();
             CleanupPlatforms();
-        }
-
-        private void Initialize()
-        {
-            _isMoving = false;
-            _activePlatforms.Clear();
-            _platformSpeed = LevelManager.Instance.CurrentLevelData.PlatformSpeed;
         }
 
         private void MovePlatforms()
         {
             foreach (var platform in _activePlatforms)
             {
-                platform.transform.position += Vector3.back * (_platformSpeed * Time.deltaTime);
+                platform.transform.position += 
+                    Vector3.back * (PlatformSpeed * Time.deltaTime);
             }
         }
 
-        private void SetMovement(bool start)
-        {
-            _isMoving = start;
-        }
-        
         private void CleanupPlatforms()
         {
             for (int i = _activePlatforms.Count - 1; i >= 0; i--)
@@ -57,26 +56,42 @@ namespace _Game.Systems.MovementSystem
             }
         }
 
+
         public void RegisterPlatform(Platform newPlatform)
         {
             _activePlatforms.Add(newPlatform);
         }
 
+        private void SetMovement(bool start)
+        {
+            _isMoving = start;
+        }
+
+        private void OnLevelEnd()
+        {
+            foreach (var platform in _activePlatforms)
+            {
+                Destroy(platform);
+            }
+            _activePlatforms.Clear();
+        }
+
         private void OnEnable()
         {
-            EventBus.Subscribe<OnLevelStartEvent>(e=> SetMovement(true));
-            EventBus.Subscribe<OnLevelFailEvent>(e=> SetMovement(false));
-            EventBus.Subscribe<OnLevelWinEvent>(e=>SetMovement(false));
-            EventBus.Subscribe<OnLevelInitializeEvent>(e=> Initialize());
+            EventBus.Subscribe<OnLevelStartEvent>(e => SetMovement(true));
+            EventBus.Subscribe<OnLevelFailEvent>(e => SetMovement(false));
+            EventBus.Subscribe<OnLevelFailEvent>(e => OnLevelEnd());
+            EventBus.Subscribe<OnLevelWinEvent>(e => SetMovement(false));
+            EventBus.Subscribe<OnLevelWinEvent>(e => OnLevelEnd());
         }
 
         private void OnDisable()
         {
-            EventBus.Unsubscribe<OnLevelStartEvent>(e=> SetMovement(true));
-            EventBus.Unsubscribe<OnLevelFailEvent>(e=> SetMovement(false));
-            EventBus.Unsubscribe<OnLevelWinEvent>(e=>SetMovement(false));
-            EventBus.Unsubscribe<OnLevelInitializeEvent>(e=> Initialize());
-
+            EventBus.Unsubscribe<OnLevelStartEvent>(e => SetMovement(true));
+            EventBus.Unsubscribe<OnLevelFailEvent>(e => OnLevelEnd());
+            EventBus.Unsubscribe<OnLevelFailEvent>(e => SetMovement(false));
+            EventBus.Unsubscribe<OnLevelWinEvent>(e => OnLevelEnd());
+            EventBus.Unsubscribe<OnLevelWinEvent>(e => SetMovement(false));
         }
     }
 }

@@ -8,98 +8,85 @@ using UnityEngine.Serialization;
 namespace _Game.Systems.PlatformSystem
 {
     public class Platform : MonoBehaviour
+{
+    [Header("Settings")]
+    [SerializeField] private float _fallSpeed = 2f;
+    [SerializeField] private float _destroyHeight = -5f;
+    
+    private GameObject _mainPart;
+    private GameObject _slicedPart;
+    private MeshHandler _meshHandler;
+    private Coroutine _moveCoroutine;
+
+    public GameObject MainPart => _mainPart;
+    public Vector3 MainPartCenterPosition => _mainPart.GetComponent<MeshRenderer>().bounds.center;
+    public Vector3 MainPartSize => _mainPart.GetComponent<MeshRenderer>().bounds.size;
+    public Vector3 MainPartPivot => new Vector3(
+        MainPartCenterPosition.x - MainPartSize.x / 2,
+        MainPartCenterPosition.y - MainPartSize.y / 2, 
+        MainPartCenterPosition.z - MainPartSize.z / 2
+    );
+
+    public void Initialize(GameObject mainPart, MeshHandler meshHandler)
     {
-        private Vector3 _dimensions;
-        private Material _platformMaterial;
-        private GameObject _mainPart;
-        private GameObject _slicedPart;
-        private bool _isMoving;
-        private float _speed = 3f;
-        [SerializeField]private float movementRange = 5f;
-        [SerializeField] private float fallSpeed = 2f;
-        [SerializeField] private float destroyHeight = -5f;
-        private Vector3 _startPosition;
-        private Coroutine _moveCoroutine;
+        _mainPart = mainPart;
+        _meshHandler = meshHandler;
+    }
 
-        public GameObject MainPart => _mainPart;
-        public Vector3 Dimensions => _dimensions;
-        public Material PlatformMaterial => _platformMaterial;
-        public Vector3 MainPartCenterPosition => _mainPart.GetComponent<MeshRenderer>().bounds.center;
-        public Vector3 MainPartSize => _mainPart.GetComponent<MeshRenderer>().bounds.size;
+    public void MoveMainPart()
+    {
+        _moveCoroutine = StartCoroutine(MoveToX());
+    }
 
-        public Vector3 MainPartPivot => new Vector3(MainPartCenterPosition.x - MainPartSize.x / 2,
-            MainPartCenterPosition.y - MainPartSize.y / 2, MainPartCenterPosition.z - MainPartSize.z / 2);
-        
-        public void Initialize(GameObject mainPart)
-        {
-            _mainPart = mainPart;
-            _isMoving = false;
-            PlatformMovement.Instance.RegisterPlatform(this);
-        }
-        
-        public void MoveMainPart()
-        {
-            _moveCoroutine = StartCoroutine(MoveToX());
-        }
+    private IEnumerator MoveToX()
+    {
+        float duration = 1f;
+        Vector3 startPos = _mainPart.transform.localPosition;
+        Vector3 endPos = new Vector3(startPos.x + _meshHandler.RelativeSpawnPositionX*2, startPos.y, startPos.z);
 
-        private IEnumerator MoveToX()
+        while (true)
         {
-            float duration = 1f;
-            Vector3 startPos = _mainPart.transform.localPosition;
-            Vector3 endPos = new Vector3(startPos.x + MeshHandler.Instance.RelativeSpawnPositionX*2, startPos.y, startPos.z);
-
-            while (true) // Infinite loop for ping-pong effect
-            {
-                float elapsedTime = 0f;
-                while (elapsedTime < duration)
-                {
-                    elapsedTime += Time.deltaTime;
-                    _mainPart.transform.localPosition = Vector3.Lerp(startPos, endPos, elapsedTime / duration);
-                    yield return null;
-                }
-                _mainPart.transform.localPosition = endPos;
-
-                elapsedTime = 0f;
-                while (elapsedTime < duration)
-                {
-                    elapsedTime += Time.deltaTime;
-                    _mainPart.transform.localPosition = Vector3.Lerp(endPos, startPos, elapsedTime / duration);
-                    yield return null;
-                }
-                _mainPart.transform.localPosition = startPos;
-            }
-        }
-        
-        public void SetSlicedPart(GameObject slicedPart)
-        {
-            _slicedPart = slicedPart;
-        }
-        
-        public void SetMainPart(GameObject mainPart)
-        {
-            _mainPart = mainPart;
-        }
-        public void StopMoving()
-        {
-            _isMoving = false;
-            StopCoroutine(_moveCoroutine);
-        }
-
-        public void StartFalling()
-        {
-            transform.SetParent(null);
-            StartCoroutine(FallDown());
-        }
-
-        private IEnumerator FallDown()
-        {
-            while (_slicedPart.transform.position.y > destroyHeight)
-            {
-                _slicedPart.transform.position += Vector3.down * (fallSpeed * Time.deltaTime);
-                yield return null;
-            }
-
-            Destroy(_slicedPart);
+            yield return MoveBetweenPoints(startPos, endPos, duration);
+            yield return MoveBetweenPoints(endPos, startPos, duration);
         }
     }
+
+    private IEnumerator MoveBetweenPoints(Vector3 start, Vector3 end, float duration)
+    {
+        float elapsed = 0;
+        while (elapsed < duration)
+        {
+            _mainPart.transform.localPosition = 
+                Vector3.Lerp(start, end, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        _mainPart.transform.localPosition = end;
+    }
+
+    public void SetMainPart(GameObject mainPart) => _mainPart = mainPart;
+    public void SetSlicedPart(GameObject slicedPart) => _slicedPart = slicedPart;
+
+    public void StopMoving()
+    {
+        if (_moveCoroutine != null)
+            StopCoroutine(_moveCoroutine);
+    }
+
+    public void StartFalling()
+    {
+        StartCoroutine(FallDown());
+    }
+
+    private IEnumerator FallDown()
+    {
+        while (_slicedPart.transform.position.y > _destroyHeight)
+        {
+            _slicedPart.transform.position += 
+                Vector3.down * (_fallSpeed * Time.deltaTime);
+            yield return null;
+        }
+        Destroy(_slicedPart);
+    }
+}
 }
