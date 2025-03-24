@@ -13,9 +13,9 @@ namespace _Game.Systems.PlatformSystem
     [SerializeField] private float _fallSpeed = 2f;
     [SerializeField] private float _destroyHeight = -5f;
     
-    // Components
     private GameObject _mainPart;
     private GameObject _slicedPart;
+    private MeshHandler _meshHandler;
     private Coroutine _moveCoroutine;
 
     public GameObject MainPart => _mainPart;
@@ -27,9 +27,10 @@ namespace _Game.Systems.PlatformSystem
         MainPartCenterPosition.z - MainPartSize.z / 2
     );
 
-    public void Initialize(GameObject mainPart)
+    public void Initialize(GameObject mainPart, MeshHandler meshHandler)
     {
         _mainPart = mainPart;
+        _meshHandler = meshHandler;
     }
 
     public void MoveMainPart()
@@ -41,11 +42,7 @@ namespace _Game.Systems.PlatformSystem
     {
         float duration = 1f;
         Vector3 startPos = _mainPart.transform.localPosition;
-        Vector3 endPos = new Vector3(
-            startPos.x + _mainPart.transform.localScale.z, 
-            startPos.y, 
-            startPos.z
-        );
+        Vector3 endPos = new Vector3(startPos.x + _meshHandler.RelativeSpawnPositionX*2, startPos.y, startPos.z);
 
         while (true)
         {

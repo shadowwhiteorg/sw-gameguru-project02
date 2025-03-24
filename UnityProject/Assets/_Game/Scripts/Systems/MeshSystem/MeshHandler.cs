@@ -21,19 +21,21 @@ namespace _Game.Systems.MeshSystem
         private int _comboCount;
         private bool _isComboActive;
         private PlayerController _playerController;
+        private IPlatformMovement _platformMovement;
         public float PlatformLength => _initialPlatformSize.z;
         public float RelativeSpawnPositionX => _initialPlatformSize.z / 2;
 
-        public void Initialize(PlayerController playerController)
+        public void Initialize(PlayerController playerController, IPlatformMovement platformMovement)
         {
             _playerController = playerController;
+            _platformMovement = platformMovement;
         }
         public Platform GeneratePlatform(Vector3 position, float platformWidth = 0)
         {
             var platformObj = new GameObject("Platform");
             platformObj.transform.position = position;
             var platform = platformObj.AddComponent<Platform>();
-        
+            _platformMovement.RegisterPlatform(platform);
             var platformSize = new Vector3(
                 platformWidth > 0 ? platformWidth : _initialPlatformSize.x,
                 _initialPlatformSize.y,
@@ -43,7 +45,7 @@ namespace _Game.Systems.MeshSystem
             var mainMesh = GeneratePlatformMesh(platform, platformSize, 
                 platformObj.transform.position - RelativeSpawnPositionX * Vector3.right, true);
         
-            platform.Initialize(mainMesh);
+            platform.Initialize(mainMesh,this);
             return platform;
         }
 

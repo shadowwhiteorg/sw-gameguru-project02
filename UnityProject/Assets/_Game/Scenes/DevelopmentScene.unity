@@ -304,6 +304,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3297099371455819633, guid: 61fc5f3f8b6d8014babc239601075e36, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1314,6 +1318,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1330117391826889695, guid: 8f489c0f01509dd47a3a959649de893e, type: 3}
   m_PrefabInstance: {fileID: 8845163741466035171}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1092881722 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4783078825024304211, guid: 8f489c0f01509dd47a3a959649de893e, type: 3}
+  m_PrefabInstance: {fileID: 8845163741466035171}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10e00fec459d4b548fca820dd75741a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1150241964
 GameObject:
   m_ObjectHideFlags: 3
@@ -1769,10 +1784,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 589412b927ff4c8fa1e844abb617f8f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _meshHandlerPrefab: {fileID: 8799524641152271174, guid: 613182ca9c8a39b4f9e54f2c395a618a, type: 3}
-  _platformOperatorPrefab: {fileID: 5594253694480056818, guid: fa9f17388895c854195aaddce0a66ae6, type: 3}
-  _platformMovementPrefab: {fileID: 8601139875471992864, guid: 2a1b7428be86a164ca6a985d0531b7a7, type: 3}
-  _levelManagerPrefab: {fileID: 3116203800996178665, guid: 61fc5f3f8b6d8014babc239601075e36, type: 3}
+  meshHandlerPrefab: {fileID: 8799524641152271174, guid: 613182ca9c8a39b4f9e54f2c395a618a, type: 3}
+  platformOperatorPrefab: {fileID: 5594253694480056818, guid: fa9f17388895c854195aaddce0a66ae6, type: 3}
+  platformMovementPrefab: {fileID: 8601139875471992864, guid: 2a1b7428be86a164ca6a985d0531b7a7, type: 3}
+  levelManagerPrefab: {fileID: 3116203800996178665, guid: 61fc5f3f8b6d8014babc239601075e36, type: 3}
 --- !u!4 &1726484290
 Transform:
   m_ObjectHideFlags: 0
@@ -2410,6 +2425,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2835318876218085617, guid: 8f489c0f01509dd47a3a959649de893e, type: 3}
+      propertyPath: _body
+      value: 
+      objectReference: {fileID: 1092881722}
     - target: {fileID: 3316078868902530691, guid: 8f489c0f01509dd47a3a959649de893e, type: 3}
       propertyPath: m_Name
       value: Player

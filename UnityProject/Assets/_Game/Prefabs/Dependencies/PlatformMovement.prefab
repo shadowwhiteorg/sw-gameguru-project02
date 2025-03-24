@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3390542896c3415d8716179c76ed5780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  removeZThreshold: -10
+  removeZThreshold: -50

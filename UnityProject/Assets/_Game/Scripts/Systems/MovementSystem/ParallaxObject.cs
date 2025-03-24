@@ -3,45 +3,52 @@ using _Game.DataStructures;
 using _Game.Systems.LevelSystem;
 using _Game.Utils;
 using UnityEngine;
+using _Game.Interfaces;
 
 namespace _Game.Systems.MovementSystem
 {
+    using UnityEngine;
+
     public class ParallaxObject : MonoBehaviour
     {
-        [SerializeField] private float parallaxSpeedMultiplier = 0.5f;
+        [Header("Settings")]
+        [SerializeField] private float _parallaxSpeedMultiplier = 0.5f;
+
+        private IPlatformMovement _platformMovement;
+        private ILevelManager _levelManager;
         private bool _isMoving;
-        private PlatformMovement _platformMovement;
-        private LevelManager _levelManager;
-        
-        public void Initialize(PlatformMovement platformMovement, LevelManager levelManager)
+
+        public void Initialize(ILevelManager levelManager)
         {
-            _platformMovement = platformMovement;
             _levelManager = levelManager;
         }
-        
-        private void SetMovement(bool start)
+
+        private void Update()
         {
-            _isMoving = start;
+            if (_isMoving)
+            {
+                transform.position += Vector3.back * (
+                    _levelManager.CurrentLevelData.PlatformSpeed * 
+                    _parallaxSpeedMultiplier * 
+                    Time.deltaTime
+                );
+            }
         }
-        
-        void Update()
-        {
-            // if (_isMoving) 
-            //     transform.position += Vector3.back * (_levelManager.CurrentLevelData.PlatformSpeed* parallaxSpeedMultiplier * Time.deltaTime);
-        }
+
+        private void SetMovement(bool start) => _isMoving = start;
 
         private void OnEnable()
         {
-            EventBus.Subscribe<OnLevelStartEvent>(e=> SetMovement(true));
-            EventBus.Subscribe<OnLevelFailEvent>(e=> SetMovement(false));
-            EventBus.Subscribe<OnLevelWinEvent>(e=>SetMovement(false));
+            EventBus.Subscribe<OnLevelStartEvent>(e => SetMovement(true));
+            EventBus.Subscribe<OnLevelFailEvent>(e => SetMovement(false));
+            EventBus.Subscribe<OnLevelWinEvent>(e => SetMovement(false));
         }
 
         private void OnDisable()
         {
-            EventBus.Unsubscribe<OnLevelStartEvent>(e=> SetMovement(true));
-            EventBus.Unsubscribe<OnLevelFailEvent>(e=> SetMovement(false));
-            EventBus.Unsubscribe<OnLevelWinEvent>(e=>SetMovement(false));
+            EventBus.Unsubscribe<OnLevelStartEvent>(e => SetMovement(true));
+            EventBus.Unsubscribe<OnLevelFailEvent>(e => SetMovement(false));
+            EventBus.Unsubscribe<OnLevelWinEvent>(e => SetMovement(false));
         }
     }
 }

@@ -46,3 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelDataCatalog: {fileID: 11400000, guid: 2ceebc3adb21f7a4aa699699e8ea40e0, type: 2}
   finalPlatformPrefab: {fileID: 1931880758731727156, guid: abc3890cc9871f34aa7fe6354bb2c729, type: 3}
+  finalPlatformDistance: 5

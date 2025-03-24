@@ -1,34 +1,34 @@
-﻿using _Game.DataStructures;
-using _Game.Systems.CharacterSystem;
+﻿using _Game.Systems.CharacterSystem;
 using _Game.Systems.LevelSystem;
 using _Game.Systems.MeshSystem;
 using _Game.Systems.MovementSystem;
 using _Game.Systems.PlatformSystem;
-using _Game.Utils;
-using UnityEngine;
 
 namespace _Game.Systems.Core
 {
+    using UnityEngine;
+
     public class GameBootstrap : MonoBehaviour
     {
         [Header("Core Systems")]
-        [SerializeField] private MeshHandler _meshHandlerPrefab;
-        [SerializeField] private PlatformOperator _platformOperatorPrefab;
-        [SerializeField] private PlatformMovement _platformMovementPrefab;
-        [SerializeField] private LevelManager _levelManagerPrefab;
-        
+        [SerializeField] private MeshHandler meshHandlerPrefab;
+        [SerializeField] private PlatformOperator platformOperatorPrefab;
+        [SerializeField] private PlatformMovement platformMovementPrefab;
+        [SerializeField] private LevelManager levelManagerPrefab;
 
         private void Awake()
         {
             // Instantiate systems
-            var meshHandler = Instantiate(_meshHandlerPrefab);
-            var platformMovement = Instantiate(_platformMovementPrefab);
-            var platformOperator = Instantiate(_platformOperatorPrefab);
-            var levelManager = LevelManager.Instance;
+            var meshHandler = Instantiate(meshHandlerPrefab);
+            var levelManager = Instantiate(levelManagerPrefab);
+            var platformMovement = Instantiate(platformMovementPrefab);
+            var platformOperator = Instantiate(platformOperatorPrefab);
+            
             var playerController = PlayerController.Instance;
             var uiController = UIController.Instance;
 
             // Initialize dependencies
+            meshHandler.Initialize(playerController, platformMovement);
             platformMovement.Initialize(levelManager);
             platformOperator.Initialize(
                 meshHandler,
@@ -36,13 +36,9 @@ namespace _Game.Systems.Core
                 platformMovement,
                 playerController
             );
-            levelManager.Initialize(platformOperator, meshHandler,playerController,platformMovement);
-            meshHandler.Initialize(playerController);
+            levelManager.Initialize(platformOperator,playerController,meshHandler);
+            playerController.Initialize(platformOperator);
             uiController.Initialize(levelManager);
-
-
-            // Start the game
-            EventBus.Fire(new OnLevelInitializeEvent());
         }
     }
 }

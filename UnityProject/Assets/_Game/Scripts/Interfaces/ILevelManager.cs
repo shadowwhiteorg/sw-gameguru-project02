@@ -8,5 +8,6 @@ namespace _Game.Interfaces
         void RegisterLevelObject(GameObject levelObject);
         int CurrentLevel { get; }
         LevelData CurrentLevelData { get; }
+        float PlatformLength { get; }
     }
 }
